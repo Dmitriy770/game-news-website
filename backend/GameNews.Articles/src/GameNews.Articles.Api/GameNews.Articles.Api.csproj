@@ -18,4 +18,8 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\GameNews.Articles.Infrastructure\GameNews.Articles.Infrastructure.csproj" />
+    </ItemGroup>
+
 </Project>

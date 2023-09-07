@@ -1,3 +1,5 @@
+using GameNews.Articles.Infrastructure.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,13 +9,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddRepositories(builder.Configuration);
+
 var app = builder.Build();
 
-Console.WriteLine(app.Environment.IsDevelopment());
+app.MigrateUp();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    Console.WriteLine("swagger");
     app.UseSwagger();
     app.UseSwaggerUI();
 }

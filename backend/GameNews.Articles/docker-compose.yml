@@ -1,7 +1,8 @@
 ﻿version: '3.9'
 
 services: 
-  articles:
+  api:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: src/GameNews.Articles.Api/Dockerfile
@@ -9,3 +10,18 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
       - '8080:80'
+  db:
+    restart: unless-stopped
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: article
+    volumes:
+      - db:/var/lib/postgresql/data
+    ports:
+      - "15432:5432"
+
+volumes: 
+  db:
+    driver: local
