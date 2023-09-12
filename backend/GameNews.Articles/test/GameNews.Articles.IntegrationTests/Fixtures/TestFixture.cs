@@ -1,4 +1,5 @@
 ﻿using FluentMigrator.Runner;
+using GameNews.Articles.Domain.Interfaces;
 using GameNews.Articles.Infrastructure.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +9,8 @@ namespace GameNews.Articles.IntegrationTests.Fixtures;
 
 public class TestFixture
 {
+    public IArticleRepository ArticleRepository { get; }
+
     public TestFixture()
     {
         var config = new ConfigurationBuilder()
@@ -16,14 +19,14 @@ public class TestFixture
             .Build();
 
         var host = Host.CreateDefaultBuilder()
-            .ConfigureServices(services =>
-            {
-                services.AddRepositories(config);
-            })
+            .ConfigureServices(services => { services.AddRepositories(config); })
             .Build();
-        
+
         ClearDatabase(host);
         host.MigrateUp();
+
+        var serviceProvider = host.Services;
+        ArticleRepository = serviceProvider.GetRequiredService<IArticleRepository>();
     }
 
     private static void ClearDatabase(IHost host)

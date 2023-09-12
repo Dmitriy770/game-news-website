@@ -1,4 +1,6 @@
-﻿using GameNews.Articles.Infrastructure.Storage;
+﻿using GameNews.Articles.Domain.Interfaces;
+using GameNews.Articles.Infrastructure.Storage;
+using GameNews.Articles.Infrastructure.Storage.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +14,8 @@ public static class ServiceCollectionExtensions
 
         Postgres.MapCompositeTypes();
         Postgres.AddMigrations(services);
+
+        services.AddTransient<IArticleRepository, ArticleRepository>();
         
         return services;
     }

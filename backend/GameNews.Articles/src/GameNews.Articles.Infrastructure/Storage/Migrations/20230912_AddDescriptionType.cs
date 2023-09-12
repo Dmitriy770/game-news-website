@@ -1,23 +1,21 @@
-﻿using FluentMigrator;
+using FluentMigrator;
 
 namespace GameNews.Articles.Infrastructure.Storage.Migrations;
 
-[Migration(20230908, TransactionBehavior.None)]
-public class AddArticleType : Migration
-{
+[Migration(20230912, TransactionBehavior.None)]
+public class AddDescriptionType : Migration{
     public override void Up()
     {
         const string sql = @"
         DO $$
             BEGIN
-                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='article') THEN
-                    CREATE TYPE article as
+                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='description') THEN
+                    CREATE TYPE description as
                     (
                           article_id        bigint
                         , title             text
                         , preview_image     text
                         , publication_date  timestamp
-                        , content           text
                     );
                 END IF;
             END
@@ -31,7 +29,7 @@ public class AddArticleType : Migration
         const string sql = @"
         DO $$
             BEGIN
-                DROP TYPE IF EXISTS article;
+                DROP TYPE IF EXISTS description;
             END
         $$;";
         

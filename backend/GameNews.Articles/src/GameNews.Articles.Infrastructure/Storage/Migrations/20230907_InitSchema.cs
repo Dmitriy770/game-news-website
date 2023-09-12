@@ -8,7 +8,7 @@ public class InitSchema : Migration
     public override void Up()
     {
         Create.Table("articles")
-            .WithColumn("article_id").AsInt64().PrimaryKey()
+            .WithColumn("article_id").AsInt64().PrimaryKey().Identity()
             .WithColumn("title").AsString()
             .WithColumn("preview_image").AsString()
             .WithColumn("publication_date").AsDateTime()
