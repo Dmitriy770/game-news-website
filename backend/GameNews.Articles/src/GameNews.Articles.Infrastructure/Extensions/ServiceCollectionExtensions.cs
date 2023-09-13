@@ -1,4 +1,6 @@
 ﻿using GameNews.Articles.Domain.Interfaces;
+using GameNews.Articles.Domain.Services;
+using GameNews.Articles.Domain.Services.Interfaces;
 using GameNews.Articles.Infrastructure.Storage;
 using GameNews.Articles.Infrastructure.Storage.Repositories;
 using Microsoft.Extensions.Configuration;
@@ -17,6 +19,13 @@ public static class ServiceCollectionExtensions
 
         services.AddTransient<IArticleRepository, ArticleRepository>();
         
+        return services;
+    }
+
+    public static IServiceCollection AddServices(this IServiceCollection services)
+    {
+        services.AddTransient<IArticleService, ArticleService>();
+
         return services;
     }
 }

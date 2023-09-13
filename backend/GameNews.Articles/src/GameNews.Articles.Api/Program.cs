@@ -9,11 +9,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddServices();
 builder.Services.AddRepositories(builder.Configuration);
 
 var app = builder.Build();
-
-app.MigrateUp();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -23,5 +22,5 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapControllers();
-
+app.MigrateUp();
 app.Run();
