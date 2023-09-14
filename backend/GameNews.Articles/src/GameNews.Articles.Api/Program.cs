@@ -21,6 +21,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(cors =>
+{
+    cors.AllowAnyMethod()
+        .AllowAnyOrigin()
+        .AllowAnyHeader();
+});
+
 app.MapControllers();
 app.MigrateUp();
 app.Run();
