@@ -1,31 +1,13 @@
 <script>
-	import { onMount } from "svelte";
-	import DescriptionCard from "./descriptionCard.svelte";
+	import DescCard from "./DescCard.svelte";
 
-    let descriptions = []
+    export let data;
 
-    onMount(async () => {
-        const res = await fetch(`http://localhost:5123/v1/article/descriptions?take=10&skip=0`);
-        descriptions = (await res.json()).descriptions
-    });
+    const {descriptions} = data;
 </script>
 
-<div>
-    <header class="header">
-        KAMOD GAMES
-    </header>
-    <main>
-        {#each descriptions as description (description.id)}
-            <DescriptionCard description={description}></DescriptionCard>
-        {/each}
-    </main>
-    <footer></footer>
+<div class="grid grid-cols-2">
+    {#each descriptions as description (description.id)}
+        <DescCard {...description}/>
+    {/each}
 </div>
-
-<style>
-    .header{
-        border: 2px solid red;
-        border-radius: 5px;
-        text-align: center;
-    }
-</style>
