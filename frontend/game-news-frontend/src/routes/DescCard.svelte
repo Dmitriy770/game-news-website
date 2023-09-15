@@ -1,5 +1,5 @@
 <script>
-    export let id = 0
+    export const id = 0
     export let title = "";
     export let publicationDate = "";
     export let image = "";
