@@ -9,10 +9,10 @@ COPY . ./
 CMD npm run dev
 
 EXPOSE 5173
-# RUN npm run build
+RUN npm run build
 
 
-# FROM nginx:1.19-alpine
-# COPY --from=build /app/build/ /usr/share/nginx/html
+FROM nginx:1.19-alpine
+COPY --from=build /app/build/ /usr/share/nginx/html
 
-# EXPOSE 80
+EXPOSE 80

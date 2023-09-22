@@ -2,10 +2,7 @@ version: '3.9'
 
 services: 
   frontend:
-    restart: unless-stopped
     build: frontend/game-news-frontend
-    ports:
-      - "5173:5173"
   
   nginx:
     image: nginx:alpine
@@ -15,7 +12,6 @@ services:
       - "8080:80"
 
   article:
-    restart: unless-stopped
     build:
       context: backend/GameNews.Articles
       dockerfile: src/GameNews.Articles.Api/Dockerfile
@@ -23,11 +19,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
       - db
-    ports:
-      - "8050:80"
 
   db:
-    restart: unless-stopped
     image: postgres:alpine
     environment:
       POSTGRES_USER: postgres
@@ -35,6 +28,13 @@ services:
       POSTGRES_DB: article
     volumes:
       - db:/var/lib/postgresql/data
+  
+  oauth:
+    build:
+      context: backend/GameNews.OAuth
+      dockerfile: src/GameNews.OAuth.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
 
 volumes: 
   db:
