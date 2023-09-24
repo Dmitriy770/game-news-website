@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "WTxx/RF1dcufk9Cv47X9yOp/LSwdePjG2QFd0vyR3avdduVg/BLSwt9MaYOFyGOBOoon8mYx3xZ3uliqriGt+Q==",
+  "dgSpecHash": "onlBGuSsNXi/Mr31dIuR40V5D1+9Bbj25HxpiymZBU9ooc/mayuqbp817sFKTvcp/9lUM5RrSjMGDSrzqw0vMA==",
   "success": true,
-  "projectFilePath": "D:\\Dima\\projects\\game-news-website\\backend\\GameNews.OAuth\\src\\GameNews.OAuth.Api\\GameNews.OAuth.Api.csproj",
+  "projectFilePath": "d:\\Dima\\projects\\game-news-website\\backend\\GameNews.OAuth\\src\\GameNews.OAuth.Api\\GameNews.OAuth.Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\zdima\\.nuget\\packages\\microsoft.aspnetcore.openapi\\7.0.0\\microsoft.aspnetcore.openapi.7.0.0.nupkg.sha512",
     "C:\\Users\\zdima\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",

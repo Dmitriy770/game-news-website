@@ -7,18 +7,18 @@ namespace GameNews.OAuth.Api.Controllers;
 [Route("api/v1/oauth")]
 public class OAuthController : ControllerBase
 {
-    private const string URL_OAUTH_REDIRECT = "https://discord.com/api/oauth2/authorize?client_id=742333635130163270&redirect_uri=http%3A%2F%2Flocalhost%3A5242%2Fv1%2Foauth%2Flogin&response_type=code&scope=identify";
+    private const string URL_OAUTH_REDIRECT = "https://discord.com/api/oauth2/authorize?client_id=742333635130163270&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fapi%2Fv1%2Foauth%2Flogin&response_type=code&scope=identify";
     
     [HttpGet("login")]
     public IActionResult Login([FromQuery]string? code, [FromQuery]string? state, CancellationToken? token)
     {
-        if (code is not null)
+        if (code is not null && state is not null)
         {
             Console.WriteLine(code);
             
-            return Redirect("http://localhost:5173/");
+            return Redirect(state);
         }
 
-        return Redirect(URL_OAUTH_REDIRECT);
+        return Redirect($"{URL_OAUTH_REDIRECT}&state={HttpContext.Request.Headers.Referer}");
     }
 }

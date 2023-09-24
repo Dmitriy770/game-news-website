@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Dima\\projects\\game-news-website\\backend\\GameNews.OAuth\\src\\GameNews.OAuth.Api\\GameNews.OAuth.Api.csproj": {}
+    "d:\\Dima\\projects\\game-news-website\\backend\\GameNews.OAuth\\src\\GameNews.OAuth.Api\\GameNews.OAuth.Api.csproj": {}
   },
   "projects": {
-    "D:\\Dima\\projects\\game-news-website\\backend\\GameNews.OAuth\\src\\GameNews.OAuth.Api\\GameNews.OAuth.Api.csproj": {
+    "d:\\Dima\\projects\\game-news-website\\backend\\GameNews.OAuth\\src\\GameNews.OAuth.Api\\GameNews.OAuth.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Dima\\projects\\game-news-website\\backend\\GameNews.OAuth\\src\\GameNews.OAuth.Api\\GameNews.OAuth.Api.csproj",
+        "projectUniqueName": "d:\\Dima\\projects\\game-news-website\\backend\\GameNews.OAuth\\src\\GameNews.OAuth.Api\\GameNews.OAuth.Api.csproj",
         "projectName": "GameNews.OAuth.Api",
-        "projectPath": "D:\\Dima\\projects\\game-news-website\\backend\\GameNews.OAuth\\src\\GameNews.OAuth.Api\\GameNews.OAuth.Api.csproj",
+        "projectPath": "d:\\Dima\\projects\\game-news-website\\backend\\GameNews.OAuth\\src\\GameNews.OAuth.Api\\GameNews.OAuth.Api.csproj",
         "packagesPath": "C:\\Users\\zdima\\.nuget\\packages\\",
-        "outputPath": "D:\\Dima\\projects\\game-news-website\\backend\\GameNews.OAuth\\src\\GameNews.OAuth.Api\\obj\\",
+        "outputPath": "d:\\Dima\\projects\\game-news-website\\backend\\GameNews.OAuth\\src\\GameNews.OAuth.Api\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Users\\zdima\\AppData\\Roaming\\Godot\\mono\\GodotNuGetFallbackFolder",
