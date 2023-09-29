@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\buildMultiTargeting\GameNews.OAuth.Api.props" />
-</Project>
