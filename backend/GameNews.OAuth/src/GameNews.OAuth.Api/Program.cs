@@ -1,4 +1,5 @@
 using GameNews.OAuth.Api;
+using GameNews.OAuth.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<Storage>();
+builder.Services.AddDiscordApi();
+builder.Services.AddServices();
 
 var app = builder.Build();
 

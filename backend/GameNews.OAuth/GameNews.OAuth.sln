@@ -1,8 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# 
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F257576C-98DC-4CF7-A7CC-189DCFF646CA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameNews.OAuth.Api", "src\GameNews.OAuth.Api\GameNews.OAuth.Api.csproj", "{88328EB9-0A0B-46B6-9514-C579B71DB374}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameNews.OAuth.Domain", "src\GameNews.OAuth.Domain\GameNews.OAuth.Domain.csproj", "{9E2CD5FE-77B5-45FF-9A16-4FD1CCD35BCA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameNews.OAuth.Infrastructure", "src\GameNews.OAuth.Infrastructure\GameNews.OAuth.Infrastructure.csproj", "{7172FDCD-2AA8-4D53-836D-56AC9F299AA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,11 +16,21 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{88328EB9-0A0B-46B6-9514-C579B71DB374} = {F257576C-98DC-4CF7-A7CC-189DCFF646CA}
+		{9E2CD5FE-77B5-45FF-9A16-4FD1CCD35BCA} = {F257576C-98DC-4CF7-A7CC-189DCFF646CA}
+		{7172FDCD-2AA8-4D53-836D-56AC9F299AA7} = {F257576C-98DC-4CF7-A7CC-189DCFF646CA}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{88328EB9-0A0B-46B6-9514-C579B71DB374}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{88328EB9-0A0B-46B6-9514-C579B71DB374}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88328EB9-0A0B-46B6-9514-C579B71DB374}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88328EB9-0A0B-46B6-9514-C579B71DB374}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E2CD5FE-77B5-45FF-9A16-4FD1CCD35BCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E2CD5FE-77B5-45FF-9A16-4FD1CCD35BCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E2CD5FE-77B5-45FF-9A16-4FD1CCD35BCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E2CD5FE-77B5-45FF-9A16-4FD1CCD35BCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7172FDCD-2AA8-4D53-836D-56AC9F299AA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7172FDCD-2AA8-4D53-836D-56AC9F299AA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7172FDCD-2AA8-4D53-836D-56AC9F299AA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7172FDCD-2AA8-4D53-836D-56AC9F299AA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

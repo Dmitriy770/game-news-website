@@ -19,4 +19,9 @@
       </Content>
     </ItemGroup>
 
+
+    <ItemGroup>
+      <ProjectReference Include="..\GameNews.OAuth.Infrastructure\GameNews.OAuth.Infrastructure.csproj" />
+    </ItemGroup>
+
 </Project>
