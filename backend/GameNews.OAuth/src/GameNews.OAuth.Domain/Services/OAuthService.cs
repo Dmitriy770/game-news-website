@@ -14,8 +14,8 @@ public class OAuthService : IOAuthService
 
     public async Task<string> LogIn(string code, CancellationToken token)
     {
-        await _OAuthApi.GetOAuthInfo(code, token);
+        var oAuthModel = await _OAuthApi.GetOAuthInfo(code, token);
 
-        return "";
+        return oAuthModel.AccessToken;
     }
 }

@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Api\Discord\Response\" />
+    <Folder Include="Api\Discord\Request\" />
   </ItemGroup>
 
   <ItemGroup>

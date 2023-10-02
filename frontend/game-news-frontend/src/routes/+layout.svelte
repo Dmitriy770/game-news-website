@@ -2,6 +2,10 @@
 	import '../app.postcss';
 
 	export const ssr = false;
+
+	export let data;
+
+	const {login} = data;
 </script>
 
 <div class="">

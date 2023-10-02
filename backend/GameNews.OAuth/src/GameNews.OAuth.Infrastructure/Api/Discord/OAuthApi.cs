@@ -1,5 +1,9 @@
-﻿using GameNews.OAuth.Domain.Interfaces;
+﻿using System.Net.Http.Json;
+using System.Text.Json;
+using GameNews.OAuth.Domain.Interfaces;
 using GameNews.OAuth.Domain.Models;
+using GameNews.OAuth.Infrastructure.Api.Discord.Response;
+using GameNews.OAuth.Infrastructure.Api.Utils;
 
 namespace GameNews.OAuth.Infrastructure.Api.Discord;
 
@@ -12,7 +16,7 @@ public class OAuthApi : IOAuthApi
         var oauthInfo = new KeyValuePair<string, string>[]
         {
             new("client_id", "742333635130163270"),
-            new("client_secret", ""),
+            new("client_secret", "AOMoJjYXL-bLivTVlp7xtxMIWBrEXvST"),
             new("grant_type", "authorization_code"),
             new("redirect_uri", "http://localhost:8080/api/v1/oauth/login"),
             new("code", code)
@@ -24,12 +28,20 @@ public class OAuthApi : IOAuthApi
             Method = HttpMethod.Post,
             Content = new FormUrlEncodedContent(oauthInfo)
         };
-        // request.Headers.Add("Content-Type","application/x-www-form-urlencoded");
 
         var response = await _httpClient.SendAsync(request, token);
 
-        Console.WriteLine(await response.Content.ReadAsStringAsync(token));
+        var serializerOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = new SnakeCaseNamingPolicy()
+        };
+        var body = await response.Content.ReadFromJsonAsync<TokenResponse>(serializerOptions, token);
 
-        return new OAuthModel();
+        return new OAuthModel
+        {
+            AccessToken = body.AccessToken,
+            ExpiresIn = body.ExpiresIn,
+            RefreshToken = body.RefreshToken
+        };
     }
 }
