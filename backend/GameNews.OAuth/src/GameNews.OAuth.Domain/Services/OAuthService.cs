@@ -1,4 +1,5 @@
 ﻿using GameNews.OAuth.Domain.Interfaces;
+using GameNews.OAuth.Domain.Models;
 using GameNews.OAuth.Domain.Services.Interfaces;
 
 namespace GameNews.OAuth.Domain.Services;
@@ -12,10 +13,10 @@ public class OAuthService : IOAuthService
         _OAuthApi = oAuthApi;
     }
 
-    public async Task<string> LogIn(string code, CancellationToken token)
+    public async Task<OAuthModel> LogIn(string code, CancellationToken token)
     {
         var oAuthModel = await _OAuthApi.GetOAuthInfo(code, token);
 
-        return oAuthModel.AccessToken;
+        return oAuthModel;
     }
 }

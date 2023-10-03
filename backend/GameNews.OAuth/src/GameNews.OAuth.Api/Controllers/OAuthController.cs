@@ -1,4 +1,5 @@
-﻿using GameNews.OAuth.Domain.Services.Interfaces;
+﻿using GameNews.OAuth.Api.Responses.V1;
+using GameNews.OAuth.Domain.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameNews.OAuth.Api.Controllers;
@@ -26,5 +27,20 @@ public class OAuthController : ControllerBase
         }
 
         return Redirect($"{URL_OAUTH_REDIRECT}&state={HttpContext.Request.Headers.Referer}");
+    }
+
+    [HttpGet("token")]
+    public async Task<GetTokenResponse> GetToken([FromQuery] string code, CancellationToken cancellationToken)
+    {
+        var token = await _OAuthService.LogIn(code, cancellationToken);
+        
+        Console.WriteLine(token);
+        
+        return new GetTokenResponse
+        {
+            AccessToken = token.AccessToken,
+            ExpiresIn = token.ExpiresIn,
+            RefreshToken = token.RefreshToken
+        };
     }
 }

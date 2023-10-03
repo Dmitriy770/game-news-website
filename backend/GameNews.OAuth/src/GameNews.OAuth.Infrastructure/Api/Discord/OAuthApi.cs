@@ -18,7 +18,7 @@ public class OAuthApi : IOAuthApi
             new("client_id", "742333635130163270"),
             new("client_secret", "AOMoJjYXL-bLivTVlp7xtxMIWBrEXvST"),
             new("grant_type", "authorization_code"),
-            new("redirect_uri", "http://localhost:8080/api/v1/oauth/login"),
+            new("redirect_uri", "http://localhost:8080/api/v1/oauth2/authorize"),
             new("code", code)
         };
 
@@ -36,6 +36,8 @@ public class OAuthApi : IOAuthApi
             PropertyNamingPolicy = new SnakeCaseNamingPolicy()
         };
         var body = await response.Content.ReadFromJsonAsync<TokenResponse>(serializerOptions, token);
+
+        Console.WriteLine(await response.Content.ReadAsStringAsync());
 
         return new OAuthModel
         {
