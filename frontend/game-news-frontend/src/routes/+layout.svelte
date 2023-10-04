@@ -1,11 +1,23 @@
 <script>
 	import '../app.postcss';
+	import {browser} from '$app/environment'
 
 	export const ssr = false;
 
 	export let data;
 
 	const {login} = data;
+
+	if (browser) {
+		// (не спрашивайте зачем)
+		const searchParams = new URLSearchParams(location.search)
+		searchParams.delete('code')
+		const url = new URL(location.href)
+		url.search = searchParams.toString()
+		history.replaceState(null, '', url)
+	}
+
+	console.log(login)
 </script>
 
 <div class="">
