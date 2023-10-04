@@ -14,7 +14,7 @@
 		searchParams.delete('code')
 		const url = new URL(location.href)
 		url.search = searchParams.toString()
-		history.replaceState(null, '', url)
+		history.replaceState(null, 'title', url)
 	}
 
 	console.log(login)

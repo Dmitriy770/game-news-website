@@ -1,6 +1,6 @@
-﻿namespace GameNews.OAuth.Infrastructure.Api.Discord.Response;
+﻿namespace GameNews.OAuth.Infrastructure.Api.Responses;
 
-public record TokenResponse(
+public record GetTokenResponse(
     string AccessToken,
     string TokenType,
     int ExpiresIn,

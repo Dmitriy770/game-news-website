@@ -1,10 +1,9 @@
-using GameNews.OAuth.Api;
+using GameNews.OAuth.Api.Middlewares;
 using GameNews.OAuth.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -12,6 +11,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDiscordApi();
 builder.Services.AddServices();
+
+builder.Services.AddTransient<CheckAuthorizationMiddleware>();
 
 var app = builder.Build();
 
@@ -29,6 +30,8 @@ app.UseCors(cors =>
         .AllowAnyHeader();
 });
 
+app.UseWhen(context => context.Request.Path.StartsWithSegments("/api/v1/oauth2/me"),
+    appBuilder => appBuilder.UseMiddleware<CheckAuthorizationMiddleware>());
 app.MapControllers();
 
 app.Run();
