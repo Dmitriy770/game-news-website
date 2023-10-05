@@ -9,7 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDiscordApi();
+builder.Services.AddDiscordApi(builder.Configuration);
 builder.Services.AddServices();
 
 builder.Services.AddTransient<CheckAuthorizationMiddleware>();

@@ -37,13 +37,13 @@ public class DiscordApi : IDiscordApi
 
         var request = new HttpRequestMessage
         {
-            RequestUri = new Uri(ApiUrl + "/v10/oauth2/token"),
+            RequestUri = new Uri(ApiUrl + "/oauth2/token"),
             Method = HttpMethod.Post,
             Content = new FormUrlEncodedContent(oauthInfo)
         };
 
         var response = await HttpClient.SendAsync(request, cancellationToken);
-
+        
         switch (response.StatusCode)
         {
             case HttpStatusCode.OK:
