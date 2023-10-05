@@ -6,7 +6,7 @@ namespace GameNews.OAuth.Domain.Services;
 
 public class OAuth2Service : IOAuth2Service
 {
-    private IDiscordApi _discordApi;
+    private readonly IDiscordApi _discordApi;
 
     public OAuth2Service(IDiscordApi discordApi)
     {

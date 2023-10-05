@@ -1,4 +1,6 @@
-﻿namespace GameNews.OAuth.Api.Middlewares;
+﻿using System.Net;
+
+namespace GameNews.OAuth.Api.Middlewares;
 
 public class CheckAuthorizationMiddleware : IMiddleware
 {
@@ -11,8 +13,11 @@ public class CheckAuthorizationMiddleware : IMiddleware
         }
         else
         {
-            context.Response.StatusCode = 401;
-            await context.Response.WriteAsync("Access token is invalid");
+            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            await context.Response.WriteAsJsonAsync(new
+            {
+                Error = "invalid access token exception"
+            });
         }
     }
 }
