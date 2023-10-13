@@ -43,7 +43,7 @@ public class DiscordApi : IDiscordApi
         };
 
         var response = await HttpClient.SendAsync(request, cancellationToken);
-        
+
         switch (response.StatusCode)
         {
             case HttpStatusCode.OK:
@@ -62,6 +62,66 @@ public class DiscordApi : IDiscordApi
                 );
             case HttpStatusCode.BadRequest:
                 throw new InvalidCodeException();
+            default:
+                throw new DiscordApiException();
+        }
+    }
+
+    public async Task RevokeAccessToken(string accessToken, CancellationToken cancellationToken)
+    {
+        var requestBody = new KeyValuePair<string, string>[]
+        {
+            new("client_id", _discordApiOptions.ClientId),
+            new("client_secret", _discordApiOptions.ClientSecret),
+            new("token", accessToken),
+            new("token_type_hint", "access_token")
+        };
+
+        var request = new HttpRequestMessage
+        {
+            RequestUri = new Uri(ApiUrl + "/oauth2/token/revoke"),
+            Method = HttpMethod.Post,
+            Content = new FormUrlEncodedContent(requestBody)
+        };
+
+        await HttpClient.SendAsync(request, cancellationToken);
+    }
+
+    public async Task<AccessTokenModel> RefreshAccessToken(string accessToken, CancellationToken cancellationToken)
+    {
+        var requestBody = new KeyValuePair<string, string>[]
+        {
+            new("client_id", _discordApiOptions.ClientId),
+            new("client_secret", _discordApiOptions.ClientSecret),
+            new("token", accessToken),
+            new("token_type_hint", "access_token")
+        };
+
+        var request = new HttpRequestMessage
+        {
+            RequestUri = new Uri(ApiUrl + "/oauth/token"),
+            Method = HttpMethod.Post,
+            Content = new FormUrlEncodedContent(requestBody)
+        };
+
+        var response = await HttpClient.SendAsync(request, cancellationToken);
+
+        switch (response.StatusCode)
+        {
+            case HttpStatusCode.OK:
+                var serializerOptions = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = new SnakeCaseNamingPolicy()
+                };
+                var body = await response.Content.ReadFromJsonAsync<GetTokenResponse>(serializerOptions,
+                    cancellationToken);
+
+                return new AccessTokenModel
+                (
+                    body.AccessToken,
+                    body.ExpiresIn,
+                    body.RefreshToken
+                );
             default:
                 throw new DiscordApiException();
         }

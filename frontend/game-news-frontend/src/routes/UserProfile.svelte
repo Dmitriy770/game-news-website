@@ -1,5 +1,6 @@
 <script>
 	import { browser } from '$app/environment';
+	import {saveToken, getToken} from '$lib/store/store';
 
 	async function login() {
 		try {
@@ -14,15 +15,21 @@
 			url.search = urlSeatchParams.toString();
 			history.replaceState(null, '', url);
 
-			if (code === null) {
-				throw new Error('code not found');
+			if (code !== null) {
+
+				var response = await fetch(`http://localhost:8080/api/v1/oauth2/token?code=${code}`);
+				if (!response.ok) {
+					throw new Error(await response.text());
+				}
+				var token = await response.json();
+
+				saveToken(token);
 			}
 
-			var response = await fetch(`http://localhost:8080/api/v1/oauth2/token?code=${code}`);
-			if (!response.ok) {
-				throw new Error(await response.text());
+			var token = getToken();
+			if(token.accessToken === null){
+				throw new Error("token not found")
 			}
-			var token = await response.json();
 
 			response = await fetch(`http://localhost:8080/api/v1/oauth2/me`, {
 				headers: {
@@ -33,6 +40,7 @@
 				throw new Error(await response.text());
 			}
 			var user = await response.json();
+			
 			return user;
 		} catch (error) {
 			console.log({ error });

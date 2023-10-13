@@ -26,4 +26,16 @@ public class OAuth2Service : IOAuth2Service
 
         return user;
     }
+
+    public async Task<AccessTokenModel> RefreshAccessToken(string refreshToken, CancellationToken cancellationToken)
+    {
+        var accessToken = await _discordApi.RefreshAccessToken(refreshToken, cancellationToken);
+
+        return accessToken;
+    }
+
+    public async Task RevokeAccessToken(string accessToken, CancellationToken cancellationToken)
+    {
+        await _discordApi.RevokeAccessToken(accessToken, cancellationToken);
+    }
 }

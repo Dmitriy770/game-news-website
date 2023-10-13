@@ -44,6 +44,31 @@ public class OAuth2Controller : ControllerBase
         };
     }
 
+    [HttpGet("token/refresh")]
+    [DiscordApiExceptionsFilter]
+    public async Task<RefreshTokenResponse> RefreshToken([FromQuery(Name = "token")] string refreshToken,
+        CancellationToken cancellationToken)
+    {
+        var accessToken = await _oAuth2Service.RefreshAccessToken(refreshToken, cancellationToken);
+
+        return new RefreshTokenResponse
+        {
+            AccessToken = accessToken.AccessToken,
+            ExpiresIn = accessToken.ExpiresIn,
+            RefreshToken = accessToken.RefreshToken
+        };
+    }
+
+    [HttpGet("token/revoke")]
+    [DiscordApiExceptionsFilter]
+    public async Task<RevokeTokenResponse> RevokeToken([FromQuery(Name = "token")] string accessToken,
+        CancellationToken cancellationToken)
+    {
+        await _oAuth2Service.RevokeAccessToken(accessToken, cancellationToken);
+
+        return new RevokeTokenResponse();
+    }
+
     [HttpGet("me")]
     [DiscordApiExceptionsFilter]
     public async Task<GetUserResponse> GetMe(CancellationToken cancellationToken)
