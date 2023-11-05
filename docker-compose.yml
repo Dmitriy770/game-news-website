@@ -29,7 +29,7 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
   
-  oauth:
+  auth:
     build:
       context: backend/GameNews.OAuth
       dockerfile: src/GameNews.OAuth.Api/Dockerfile

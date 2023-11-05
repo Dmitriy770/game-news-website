@@ -2,7 +2,7 @@
 
 namespace GameNews.OAuth.Domain.Services.Interfaces;
 
-public interface IOAuth2Service
+public interface IAuthService
 {
     public Task<AccessTokenModel> GetAccessToken(string code, CancellationToken cancellationToken);
 

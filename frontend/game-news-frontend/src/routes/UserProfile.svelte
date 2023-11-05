@@ -17,7 +17,7 @@
 
 			if (code !== null) {
 
-				var response = await fetch(`http://localhost:8080/api/v1/oauth2/token?code=${code}`);
+				var response = await fetch(`http://localhost:8080/api/auth/token?code=${code}`);
 				if (!response.ok) {
 					throw new Error(await response.text());
 				}
@@ -31,7 +31,7 @@
 				throw new Error("token not found")
 			}
 
-			response = await fetch(`http://localhost:8080/api/v1/oauth2/me`, {
+			response = await fetch(`http://localhost:8080/api/auth/users/me`, {
 				headers: {
 					Authorization: `Bearer ${token.accessToken}`
 				}
@@ -75,7 +75,7 @@
 	{:catch error}
 		<a
 			class="block rounded-lg w-30 px-6 py-1 bg-indigo-500 hover:bg-indigo-600 active:bg-indigo-700 text-white text-lg"
-			href="http://localhost:8080/api/v1/oauth2/authorize"
+			href="http://localhost:8080/api/auth/login"
 		>
 			Войти
 		</a>

@@ -1,8 +1,9 @@
-﻿namespace GameNews.OAuth.Infrastructure.Api.Responses;
+﻿using GameNews.OAuth.Infrastructure.Api.Entities;
+
+namespace GameNews.OAuth.Infrastructure.Api.Responses;
 
 public record GetUserResponse(
-    Application Application,
     string[] Scopes,
     string Expires,
-    User User 
+    UserEntity User 
 );

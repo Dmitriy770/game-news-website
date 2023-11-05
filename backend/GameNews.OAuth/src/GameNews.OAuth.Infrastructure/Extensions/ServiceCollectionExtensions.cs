@@ -20,7 +20,7 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
-        services.AddTransient<Domain.Services.Interfaces.IOAuth2Service, OAuth2Service>();
+        services.AddTransient<Domain.Services.Interfaces.IAuthService, AuthService>();
 
         return services;
     }

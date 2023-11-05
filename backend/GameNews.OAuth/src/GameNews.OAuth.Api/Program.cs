@@ -1,4 +1,3 @@
-using GameNews.OAuth.Api.Middlewares;
 using GameNews.OAuth.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,8 +10,6 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDiscordApi(builder.Configuration);
 builder.Services.AddServices();
-
-builder.Services.AddTransient<CheckAuthorizationMiddleware>();
 
 var app = builder.Build();
 
@@ -30,8 +27,7 @@ app.UseCors(cors =>
         .AllowAnyHeader();
 });
 
-app.UseWhen(context => context.Request.Path.StartsWithSegments("/api/v1/oauth2/me"),
-    appBuilder => appBuilder.UseMiddleware<CheckAuthorizationMiddleware>());
+app.UseExceptionHandler("/error");
 app.MapControllers();
 
 app.Run();

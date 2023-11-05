@@ -3,6 +3,6 @@
 public record UserModel(
     string Id,
     string Username,
-    Uri AvatarUrl,
-    string GlobalName
+    string GlobalName,
+    Uri AvatarUrl
 );

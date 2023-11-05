@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace GameNews.OAuth.Infrastructure.Api.Utils;
+namespace GameNews.OAuth.Infrastructure.Utils;
 
 public class SnakeCaseNamingPolicy : JsonNamingPolicy
 {

@@ -1,1 +1,1 @@
-<a href="http://localhost:8080/api/v1/oauth2/login">Это ссылка</a>
+<a href="http://localhost:8080/api/auth/login">Это ссылка</a>

@@ -1,0 +1,20 @@
+POST https://discord.com/api/v9/oauth2/authorize?client_id=742333635130163270&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fapi%2Fv1%2Foauth2%2Fauthorize&scope=identify%20guilds&state=http%3A%2F%2Flocalhost%3A8080%2F
+Authorization: NDA0MDI1NTQzNTg4MDUzMDEy.GokA5f.ylInEYGf0TnV1MtaMWBsVvSXRKTlMDn0ulAqTA
+
+### 
+
+GET https://discord.com/oauth2/authorize?client_id=742333635130163270&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fapi%2Fv1%2Foauth2%2Fauthorize&response_type=code&scope=identify%20guilds&state=http://localhost:8080/
+
+
+### 
+
+GET http://localhost:8080/api/v1/auth/me
+Authorization: wwr=wfw; wafgw=b;
+
+### Username
+
+GET http://localhost:8080/test
+Authorization: Bearer cUJKrhBLEQTETQlcKl8jFGY1CJBXG2
+
+### 
+GET http://localhost:8080/api/auth/v1/internal/token/validate

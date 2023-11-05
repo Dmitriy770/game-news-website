@@ -1,4 +1,4 @@
-﻿namespace GameNews.OAuth.Api.Responses.V1;
+﻿namespace GameNews.OAuth.Api.Responses;
 
 public record GetUserResponse(
     string GlobalName,

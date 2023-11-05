@@ -1,6 +1,6 @@
-﻿namespace GameNews.OAuth.Infrastructure.Api.Responses;
+﻿namespace GameNews.OAuth.Infrastructure.Api.Entities;
 
-public record User(
+public record UserEntity(
     string Id,
     string Username,
     string Avatar,

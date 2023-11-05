@@ -4,10 +4,10 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using GameNews.OAuth.Domain.Interfaces;
 using GameNews.OAuth.Domain.Models;
-using GameNews.OAuth.Infrastructure.Api.Exceptions;
+using GameNews.OAuth.Infrastructure.Api.Entities;
 using GameNews.OAuth.Infrastructure.Api.Responses;
-using GameNews.OAuth.Infrastructure.Api.Utils;
 using GameNews.OAuth.Infrastructure.Options;
+using GameNews.OAuth.Infrastructure.Utils;
 using Microsoft.Extensions.Options;
 
 namespace GameNews.OAuth.Infrastructure.Api;
@@ -19,6 +19,9 @@ public class DiscordApi : IDiscordApi
     private const string RedirectUri = "http://localhost:8080/api/v1/oauth2/authorize";
     private readonly DiscordApiOptions _discordApiOptions;
 
+    private readonly JsonSerializerOptions _serializerOptions =
+        new() { PropertyNamingPolicy = new SnakeCaseNamingPolicy() };
+
     public DiscordApi(IOptions<DiscordApiOptions> discordApiOptions)
     {
         _discordApiOptions = discordApiOptions.Value;
@@ -26,7 +29,7 @@ public class DiscordApi : IDiscordApi
 
     public async Task<AccessTokenModel> GetAccessToken(string code, CancellationToken cancellationToken)
     {
-        var oauthInfo = new KeyValuePair<string, string>[]
+        var content = new KeyValuePair<string, string>[]
         {
             new("client_id", _discordApiOptions.ClientId),
             new("client_secret", _discordApiOptions.ClientSecret),
@@ -34,37 +37,26 @@ public class DiscordApi : IDiscordApi
             new("redirect_uri", RedirectUri),
             new("code", code)
         };
-
         var request = new HttpRequestMessage
         {
             RequestUri = new Uri(ApiUrl + "/oauth2/token"),
             Method = HttpMethod.Post,
-            Content = new FormUrlEncodedContent(oauthInfo)
+            Content = new FormUrlEncodedContent(content)
         };
-
         var response = await HttpClient.SendAsync(request, cancellationToken);
-
-        switch (response.StatusCode)
+        if (response.StatusCode != HttpStatusCode.OK)
         {
-            case HttpStatusCode.OK:
-                var serializerOptions = new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = new SnakeCaseNamingPolicy()
-                };
-                var body = await response.Content.ReadFromJsonAsync<GetTokenResponse>(serializerOptions,
-                    cancellationToken);
-
-                return new AccessTokenModel
-                (
-                    body.AccessToken,
-                    body.ExpiresIn,
-                    body.RefreshToken
-                );
-            case HttpStatusCode.BadRequest:
-                throw new InvalidCodeException();
-            default:
-                throw new DiscordApiException();
+            throw ErrorResponseHandler(response);
         }
+
+        var body = await response.Content.ReadFromJsonAsync<GetTokenResponse>(_serializerOptions, cancellationToken);
+
+        return new AccessTokenModel
+        (
+            body.AccessToken,
+            body.ExpiresIn,
+            body.RefreshToken
+        );
     }
 
     public async Task RevokeAccessToken(string accessToken, CancellationToken cancellationToken)
@@ -89,77 +81,100 @@ public class DiscordApi : IDiscordApi
 
     public async Task<AccessTokenModel> RefreshAccessToken(string accessToken, CancellationToken cancellationToken)
     {
-        var requestBody = new KeyValuePair<string, string>[]
+        var content = new KeyValuePair<string, string>[]
         {
             new("client_id", _discordApiOptions.ClientId),
             new("client_secret", _discordApiOptions.ClientSecret),
             new("token", accessToken),
             new("token_type_hint", "access_token")
         };
-
         var request = new HttpRequestMessage
         {
             RequestUri = new Uri(ApiUrl + "/oauth/token"),
             Method = HttpMethod.Post,
-            Content = new FormUrlEncodedContent(requestBody)
+            Content = new FormUrlEncodedContent(content)
         };
-
         var response = await HttpClient.SendAsync(request, cancellationToken);
-
-        switch (response.StatusCode)
+        if (response.StatusCode == HttpStatusCode.OK)
         {
-            case HttpStatusCode.OK:
-                var serializerOptions = new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = new SnakeCaseNamingPolicy()
-                };
-                var body = await response.Content.ReadFromJsonAsync<GetTokenResponse>(serializerOptions,
-                    cancellationToken);
-
-                return new AccessTokenModel
-                (
-                    body.AccessToken,
-                    body.ExpiresIn,
-                    body.RefreshToken
-                );
-            default:
-                throw new DiscordApiException();
+            throw ErrorResponseHandler(response);
         }
+
+        var body = await response.Content.ReadFromJsonAsync<GetTokenResponse>(_serializerOptions, cancellationToken);
+
+        return new AccessTokenModel
+        (
+            body.AccessToken,
+            body.ExpiresIn,
+            body.RefreshToken
+        );
     }
 
-    public async Task<UserModel> GetUser(string accessToken, CancellationToken cancellationToken)
+    public async Task<UserEntity> GetUser(string accessToken, CancellationToken cancellationToken)
     {
         var request = new HttpRequestMessage
         {
             RequestUri = new Uri(ApiUrl + "/oauth2/@me"),
             Method = HttpMethod.Get,
+            Headers =
+            {
+                Authorization = new AuthenticationHeaderValue("Bearer", accessToken)
+            }
         };
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
         var response = await HttpClient.SendAsync(request, cancellationToken);
-
-        switch (response.StatusCode)
+        if (response.StatusCode != HttpStatusCode.OK)
         {
-            case HttpStatusCode.OK:
-                var serializerOptions = new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = new SnakeCaseNamingPolicy()
-                };
-                var body = await response.Content.ReadFromJsonAsync<GetUserResponse>(serializerOptions,
-                    cancellationToken);
-
-                var avatarUrl = new Uri($"https://cdn.discordapp.com/avatars/{body.User.Id}/{body.User.Avatar}");
-
-                return new UserModel(
-                    body.User.Id,
-                    body.User.Username,
-                    avatarUrl,
-                    body.User.GlobalName
-                );
-            case HttpStatusCode.Unauthorized:
-                throw new InvalidTokenException();
-            default:
-                throw new DiscordApiException();
+            throw ErrorResponseHandler(response);
         }
+
+        var content  = (await response.Content.ReadFromJsonAsync<GetUserResponse>(_serializerOptions, cancellationToken))!;
+        
+        return content.User;
+    }
+
+    public async Task<List<GuildEntity>> GetUserGuilds(string accessToken, CancellationToken cancellationToken)
+    {
+        var request = new HttpRequestMessage
+        {
+            RequestUri = new Uri(ApiUrl + "/users/@me/guilds"),
+            Method = HttpMethod.Get,
+            Headers =
+            {
+                Authorization = new AuthenticationHeaderValue("Bearer", accessToken)
+            }
+        };
+        var response = await HttpClient.SendAsync(request, cancellationToken);
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            throw ErrorResponseHandler(response);
+        }
+
+        return (await response.Content.ReadFromJsonAsync<List<GuildEntity>>(_serializerOptions, cancellationToken))!;
+    }
+
+    public async Task<GuildMemberEntity> GetGuildMember(string accessToken, CancellationToken cancellationToken)
+    {
+        var request = new HttpRequestMessage
+        {
+            RequestUri = new Uri(ApiUrl + "/users/@me/guilds/734819128916967494/member"),
+            Method = HttpMethod.Get,
+            Headers =
+            {
+                Authorization = new AuthenticationHeaderValue("Bearer", accessToken)
+            }
+        };
+        var response = await HttpClient.SendAsync(request, cancellationToken);
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            throw ErrorResponseHandler(response);
+        }
+
+        return (await response.Content.ReadFromJsonAsync<GuildMemberEntity>(_serializerOptions, cancellationToken))!;
+    }
+
+    private Exception ErrorResponseHandler(HttpResponseMessage response)
+    {
+        Console.WriteLine(response.StatusCode);
+        return new NotImplementedException();
     }
 }
