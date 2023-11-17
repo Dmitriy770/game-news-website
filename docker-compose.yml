@@ -35,8 +35,8 @@ services:
       dockerfile: src/GameNews.OAuth.Api/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - DiscordApiOptions__ClientId=742333635130163270
-      - DiscordApiOptions__ClientSecret=04gUjtEVmKJ7T4DcjDExqMU6LEicT63j
+      - DiscordApiOptions__ClientId=
+      - DiscordApiOptions__ClientSecret=
 
 volumes: 
   db:
