@@ -1,4 +1,5 @@
 ﻿using GameNews.OAuth.Domain.Services.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameNews.OAuth.Api.Controllers;
@@ -18,11 +19,11 @@ public class InternalController : ControllerBase
     public async Task<IActionResult> ValidateToken([FromHeader]string authorization, CancellationToken cancellationToken)
     {
         var accessToken = authorization.Replace("Bearer ", "");
-        await _authService.GetUser(accessToken, cancellationToken);
+        var user = await _authService.GetUser(accessToken, cancellationToken);
 
-        Response.Headers["Username"] = "TestUsername";
-        Response.Headers["UserId"] = "TestUserId";
-        Response.Headers["UserPermission"] = "3";
-        return new UnauthorizedResult();
+        Response.Headers["Username"] = user.Name;
+        Response.Headers["UserId"] = user.Id;
+        Response.Headers["UserRole"] = user.Role;
+        return new OkResult();
     }
 }

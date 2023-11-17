@@ -70,7 +70,7 @@
 		</div>
 	{:then user}
 		<img src={user.avatarUrl} alt="автарка" class="object-contain h-9 me-2" />
-		<p class="text-white text-lg me-5">{user.globalName}</p>
+		<p class="text-white text-lg me-5">{user.name}</p>
 		<button class="rounded-lg w-30 px-6 py-1 bg-red-600 text-white text-lg">Выйти</button>
 	{:catch error}
 		<a

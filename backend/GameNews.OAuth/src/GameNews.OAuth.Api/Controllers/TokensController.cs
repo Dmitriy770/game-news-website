@@ -18,6 +18,7 @@ public class TokensController : ControllerBase
     [HttpGet]
     public async Task<GetTokenResponse> GetToken([FromQuery] string code, CancellationToken cancellationToken)
     {
+        Console.WriteLine(code);
         var token = await _authService.GetAccessToken(code, cancellationToken);
 
         return new GetTokenResponse(

@@ -1,6 +1,6 @@
-﻿namespace GameNews.OAuth.Infrastructure.Api.Entities;
+﻿namespace GameNews.OAuth.Domain.Entities;
 
-public record RoleEntity(
+public record DiscordRoleModel(
     string Id,
     string Name,
     string Permissions,

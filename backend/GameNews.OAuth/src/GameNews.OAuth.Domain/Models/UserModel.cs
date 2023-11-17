@@ -2,7 +2,7 @@
 
 public record UserModel(
     string Id,
-    string Username,
-    string GlobalName,
-    Uri AvatarUrl
+    string Name,
+    Uri AvatarUrl,
+    string Role
 );

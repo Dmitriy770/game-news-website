@@ -1,9 +1,9 @@
-﻿using GameNews.OAuth.Infrastructure.Api.Entities;
+﻿using GameNews.OAuth.Domain.Entities;
 
 namespace GameNews.OAuth.Infrastructure.Api.Responses;
 
 public record GetUserResponse(
     string[] Scopes,
     string Expires,
-    UserEntity User 
+    DiscordUserModel User
 );

@@ -24,8 +24,9 @@ public class UsersController : ControllerBase
 
         return new GetUserResponse
         (
-            user.GlobalName,
-            user.AvatarUrl.ToString()
+            user.Name,
+            user.AvatarUrl.ToString(),
+            user.Role
         );
     }
 }
