@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FD28FD92-3BFC-4C7E-BA51-4C633756D721}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameNews.MediaStorage.Api", "src\GameNews.MediaStorage.Api\GameNews.MediaStorage.Api.csproj", "{7F293C9E-0FB6-44CC-B1E1-AEB4CED921BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameNews.MediaStorage.Domain", "src\GameNews.MediaStorage.Domain\GameNews.MediaStorage.Domain.csproj", "{771748B7-DBAE-4EEF-BAF5-01387E59789C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameNews.MediaStorage.Infrastructure", "src\GameNews.MediaStorage.Infrastructure\GameNews.MediaStorage.Infrastructure.csproj", "{8CB02098-1D0F-4624-A9CF-2FFA179A4BB8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7F293C9E-0FB6-44CC-B1E1-AEB4CED921BD} = {FD28FD92-3BFC-4C7E-BA51-4C633756D721}
+		{771748B7-DBAE-4EEF-BAF5-01387E59789C} = {FD28FD92-3BFC-4C7E-BA51-4C633756D721}
+		{8CB02098-1D0F-4624-A9CF-2FFA179A4BB8} = {FD28FD92-3BFC-4C7E-BA51-4C633756D721}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7F293C9E-0FB6-44CC-B1E1-AEB4CED921BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F293C9E-0FB6-44CC-B1E1-AEB4CED921BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F293C9E-0FB6-44CC-B1E1-AEB4CED921BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F293C9E-0FB6-44CC-B1E1-AEB4CED921BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{771748B7-DBAE-4EEF-BAF5-01387E59789C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{771748B7-DBAE-4EEF-BAF5-01387E59789C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{771748B7-DBAE-4EEF-BAF5-01387E59789C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{771748B7-DBAE-4EEF-BAF5-01387E59789C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CB02098-1D0F-4624-A9CF-2FFA179A4BB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CB02098-1D0F-4624-A9CF-2FFA179A4BB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CB02098-1D0F-4624-A9CF-2FFA179A4BB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CB02098-1D0F-4624-A9CF-2FFA179A4BB8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
