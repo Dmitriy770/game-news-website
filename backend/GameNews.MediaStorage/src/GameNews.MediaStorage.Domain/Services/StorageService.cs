@@ -30,7 +30,7 @@ public sealed class StorageService : IStorageService
         throw new NotImplementedException();
     }
 
-    public Task DeleteByArticleId(Guid articleId, CancellationToken cancellationToken)
+    public Task DeleteAllByArticleId(Guid articleId, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
