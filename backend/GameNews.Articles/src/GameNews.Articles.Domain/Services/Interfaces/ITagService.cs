@@ -1,6 +1,6 @@
 namespace GameNews.Articles.Domain.Services.Interfaces;
 
-public interface IArticleService
+public interface ITagService
 {
     
 }

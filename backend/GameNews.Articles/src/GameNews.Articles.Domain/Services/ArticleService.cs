@@ -1,35 +1,49 @@
+using GameNews.Articles.Domain.Errors;
 using GameNews.Articles.Domain.Interfaces;
 using GameNews.Articles.Domain.Models;
-using GameNews.Articles.Domain.Services.Interfaces;
+using OneOf;
 
 namespace GameNews.Articles.Domain.Services;
 
-public class ArticleService : IArticleService
+public sealed class ArticleService
 {
-    private IArticleRepository _articleRepository;
-    
+    private readonly IArticleRepository _articleRepository;
+
     public ArticleService(IArticleRepository articleRepository)
     {
         _articleRepository = articleRepository;
     }
-    
-    public async Task<ArticleModel> Get(long id, CancellationToken token)
+
+    public async Task<OneOf<ArticleModel, AccessDeniedError>> Create(
+        UserModel user,
+        CancellationToken cancellationToken)
     {
-        return await _articleRepository.Get(id, token);
+        if (user.Role is RoleModel.Anonymous or RoleModel.User)
+        {
+            return new AccessDeniedError();
+        }
+
+        var article = new ArticleModel
+        {
+            Id = new Guid(),
+            CreationDate = DateTime.Now,
+            AuthorId = user.Id
+        };
+
+        await _articleRepository.SaveArticle(article, cancellationToken);
+
+        return article;
     }
 
-    public async Task<IEnumerable<DescriptionModel>> GetDescriptions(int take, int skip, CancellationToken token)
+    public async Task<OneOf<ArticleModel, ArticleNotFoundError, AccessDeniedError>> Update(
+        ArticleModel article,
+        CancellationToken cancellationToken)
     {
-        return await _articleRepository.GetDescriptions(take, skip, token);
-    }
+        if ((await _articleRepository.GetArticle(article.Id, cancellationToken)).Value is ArticleNotFoundError)
+        {
+            return new ArticleNotFoundError();
+        }
 
-    public async Task<long> Add(ArticleModel article, CancellationToken token)
-    {
-        return await _articleRepository.Add(article, token);
-    }
-
-    public async Task Delete(long id, CancellationToken token)
-    {
-        await _articleRepository.Delete(id, token);
+        return new ArticleModel();
     }
 }
