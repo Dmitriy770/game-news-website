@@ -9,10 +9,10 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddRepositories(this IServiceCollection services, IConfigurationRoot config)
     {
-        services.AddDbContext<ArticleRepositoryContext>(options =>
-        {
-            options.UseNpgsql("");
-        });
+        // services.AddDbContext<ArticleRepositoryContext>(options =>
+        // {
+        //     options.UseNpgsql("");
+        // });
         
         return services;
     }

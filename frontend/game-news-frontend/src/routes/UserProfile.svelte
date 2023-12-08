@@ -52,7 +52,7 @@
 </script>
 
 <div class="flex flex-row justify-end items-center h-10 w-80">
-	{#await userProfile}
+	<!-- {#await userProfile}
 		<div class="w-full h-full animate-pulse flex flex-row justify-end items-center">
 			<svg
 				class="w-9 h-9 text-gray-200 me-2"
@@ -72,12 +72,12 @@
 		<img src={user.avatarUrl} alt="автарка" class="object-contain h-9 me-2" />
 		<p class="text-white text-lg me-5">{user.name}</p>
 		<button class="rounded-lg w-30 px-6 py-1 bg-red-600 text-white text-lg">Выйти</button>
-	{:catch error}
+	{:catch error} -->
 		<a
 			class="block rounded-lg w-30 px-6 py-1 bg-indigo-500 hover:bg-indigo-600 active:bg-indigo-700 text-white text-lg"
 			href="http://localhost:8080/api/auth/login"
 		>
 			Войти
 		</a>
-	{/await}
+	<!-- {/await} -->
 </div>

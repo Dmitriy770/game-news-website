@@ -12,6 +12,6 @@
 </div>
 <div class="grid grid-cols-2 gap-5 mx-5">
     {#each descriptions as description (description.id)}
-        <DescCard {...description}/>
+        <!-- <DescCard {...description}/> -->
     {/each}
 </div>

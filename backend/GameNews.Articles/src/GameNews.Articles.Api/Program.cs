@@ -32,5 +32,5 @@ app.UseCors(cors =>
 });
 
 app.MapControllers();
-app.MigrateUp();
+// app.MigrateUp();
 app.Run();
