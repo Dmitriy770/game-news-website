@@ -27,22 +27,18 @@ public class AuthService : IAuthService
         var user = await _discordClient.GetUser(accessToken, cancellationToken);
         var guilds = await _discordClient.GetUserGuilds(accessToken, cancellationToken);
         var guildMember = await _discordClient.GetGuildMember(accessToken, cancellationToken);
-        
+
         var guild = guilds.FirstOrDefault(g => g.Id.CompareTo("734819128916967494") == 0);
         var role = "user";
-        if (guildMember is not null)
+        if (guildMember is not null && guildMember.Roles.Any(r => r.CompareTo("789511663459369001") == 0))
         {
-            role = "guildUser";
-        }
-        else if (guildMember is not null && guildMember.Roles.Any(r => r.CompareTo(789511663459369001) == 0))
-        {
-            role = "Administrator";
+            role = "Author";
         }
         else if (guild is not null && guild.Owner)
         {
-            role = "Owner";
+            role = "Administrator";
         }
-        
+
         return new UserModel(
             user.Id,
             user.GlobalName,

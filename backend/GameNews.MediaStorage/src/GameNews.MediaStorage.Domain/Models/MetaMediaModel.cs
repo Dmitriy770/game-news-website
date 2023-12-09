@@ -1,8 +1,8 @@
 ﻿namespace GameNews.MediaStorage.Domain.Models;
 
-public record FileModel(
+public record MetaMediaModel(
     Guid ArticleId,
     Guid Id,
-    string ContentType,
-    byte[] Source
-    );
+    string? Type,
+    string? Alt
+);

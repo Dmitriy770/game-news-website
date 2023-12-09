@@ -10,7 +10,7 @@ public class ErrorsController : ControllerBase
     public IActionResult Error()
     {
         var exception = HttpContext.Features.Get<Exception>();
-
+        
         return exception switch
         {
             InvalidCodeException => Problem("Invalid code", statusCode: (int)HttpStatusCode.BadRequest),

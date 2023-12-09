@@ -16,14 +16,24 @@ public class InternalController : ControllerBase
     }
 
     [HttpGet("token/validate")]
-    public async Task<IActionResult> ValidateToken([FromHeader]string authorization, CancellationToken cancellationToken)
+    public async Task<IActionResult> ValidateToken(
+        [FromHeader] string authorization,
+        CancellationToken cancellationToken)
     {
         var accessToken = authorization.Replace("Bearer ", "");
+        if (accessToken == "")
+        {
+            Response.Headers["UserId"] = "";
+            Response.Headers["UserRole"] = "User";
+            return new OkResult();
+        }
+
         var user = await _authService.GetUser(accessToken, cancellationToken);
 
         Response.Headers["Username"] = user.Name;
         Response.Headers["UserId"] = user.Id;
         Response.Headers["UserRole"] = user.Role;
+
         return new OkResult();
     }
 }

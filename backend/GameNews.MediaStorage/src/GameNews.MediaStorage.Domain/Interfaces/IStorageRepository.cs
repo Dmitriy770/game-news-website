@@ -1,15 +1,42 @@
-﻿using GameNews.MediaStorage.Domain.Errors;
+﻿using FluentResults;
 using GameNews.MediaStorage.Domain.Models;
-using OneOf;
 
 namespace GameNews.MediaStorage.Domain.Interfaces;
 
 public interface IStorageRepository
 {
-    public Task<Guid> Save(Guid articleId, string contentType, byte[] source, CancellationToken cancellationToken);
-    public Task<OneOf<FileModel, FileNotFoundError>> Get(Guid articleId, Guid fileId, CancellationToken cancellationToken);
-    public Task<IEnumerable<FileInfoModel>> GetInfoByArticleId(Guid articleId, CancellationToken cancellationToken);
-    public Task<OneOf<Guid, FileNotFoundError>> Update(Guid articleId, Guid fileId, string contentType, byte[] source, CancellationToken cancellationToken);
-    public Task<OneOf<Guid, FileNotFoundError>> Delete(Guid articleId, Guid fileId, CancellationToken cancellationToken);
-    public Task DeleteAllByArticleId(Guid articleId, CancellationToken cancellationToken);
+    public Task Save(
+        Guid articleId,
+        Guid mediaId,
+        string type,
+        byte[] source,
+        CancellationToken cancellationToken);
+
+    public Task<Result<MediaModel>> Get(
+        Guid articleId,
+        Guid mediaId,
+        CancellationToken cancellationToken);
+
+    public Task<IEnumerable<MetaMediaModel>> GetAllMetaByArticle(
+        Guid articleId,
+        CancellationToken cancellationToken);
+
+    public Task<Result> UpdateMeta(
+        MetaMediaModel metaMedia,
+        CancellationToken cancellationToken);
+
+    public Task<Result<MetaMediaModel>> GetMeta(
+        Guid articleId,
+        Guid mediaId,
+        CancellationToken cancellationToken
+    );
+
+    public Task<Result> Delete(
+        Guid articleId,
+        Guid mediaId,
+        CancellationToken cancellationToken);
+
+    public Task DeleteAllByArticle(
+        Guid articleId,
+        CancellationToken cancellationToken);
 }

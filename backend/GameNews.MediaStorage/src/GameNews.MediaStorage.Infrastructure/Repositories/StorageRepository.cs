@@ -1,10 +1,9 @@
-﻿using GameNews.MediaStorage.Domain.Errors;
+﻿using FluentResults;
+using GameNews.MediaStorage.Domain.Errors;
 using GameNews.MediaStorage.Domain.Interfaces;
 using GameNews.MediaStorage.Domain.Models;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
-using OneOf;
 
 namespace GameNews.MediaStorage.Infrastructure.Repositories;
 
@@ -14,8 +13,8 @@ public sealed class StorageRepository : IStorageRepository
 
     public StorageRepository()
     {
-        const string connectionUri = "mongodb:://localhost:27017";
-        var client = new MongoClient(connectionUri);
+        const string connectionString = "mongodb://root:password@storage-db:27017/?retryWrites=true&w=majority";
+        var client = new MongoClient(connectionString);
 
         _bucket = new GridFSBucket(client.GetDatabase("game-news-media"), new GridFSBucketOptions
         {
@@ -23,118 +22,143 @@ public sealed class StorageRepository : IStorageRepository
         });
     }
 
-    public async Task<Guid> Save(Guid articleId, string contentType, byte[] source, CancellationToken cancellationToken)
-    {
-        var fileId = new Guid();
-        var filename = $"{articleId}.{fileId}";
-
-        var options = new GridFSUploadOptions
-        {
-            Metadata = new BsonDocument
-            {
-                { "contentType", contentType }
-            }
-        };
-        await _bucket.UploadFromBytesAsync(filename, source, options, cancellationToken);
-
-        return fileId;
-    }
-
-    public async Task<OneOf<FileModel, FileNotFoundError>> Get(Guid articleId, Guid fileId,
+    public async Task Save(
+        Guid articleId,
+        Guid mediaId,
+        string type,
+        byte[] source,
         CancellationToken cancellationToken)
     {
-        var fileInfo = await FindFileInfo(articleId, fileId, cancellationToken);
+        var options = new GridFSUploadOptions
+        {
+            Metadata =
+            {
+                { "articleId", articleId },
+                { "mediaId", mediaId },
+                { "type", type },
+                { "alt", "" }
+            }
+        };
+
+        var filename = $"{articleId}.{mediaId}";
+        await _bucket.UploadFromBytesAsync(filename, source, options, cancellationToken);
+    }
+
+    public async Task<Result<MediaModel>> Get(
+        Guid articleId,
+        Guid mediaId,
+        CancellationToken cancellationToken)
+    {
+        var fileInfo = await Find(articleId, mediaId, cancellationToken);
         if (fileInfo is null)
         {
-            return new FileNotFoundError();
+            return Result.Fail(new MediaNotFoundError());
         }
 
         var source = await _bucket.DownloadAsBytesAsync(fileInfo.Id, cancellationToken: cancellationToken);
-        return new FileModel(
+
+        return new MediaModel(
             articleId,
-            fileId,
-            fileInfo.Metadata["contentType"].AsString,
+            mediaId,
+            fileInfo.Metadata["type"].AsString,
             source
         );
     }
 
-    public async Task<IEnumerable<FileInfoModel>> GetInfoByArticleId(Guid articleId, CancellationToken cancellationToken)
+    public async Task<Result<MetaMediaModel>> GetMeta(Guid articleId, Guid mediaId, CancellationToken cancellationToken)
     {
-        return (await FindFileByArticleId(articleId, cancellationToken)).Select(
-            f => new FileInfoModel(
-                articleId,
-                new Guid(f.Filename.Split(".")[1]),
-                f.Metadata["contentType"].AsString
-            ));
-    }
-
-    public async Task<OneOf<Guid, FileNotFoundError>> Update(Guid articleId, Guid fileId, string contentType,
-        byte[] source, CancellationToken cancellationToken)
-    {
-        var fileInfo = await FindFileInfo(articleId, fileId, cancellationToken);
+        var fileInfo = await Find(articleId, mediaId, cancellationToken);
         if (fileInfo is null)
         {
-            return new FileNotFoundError();
+            return Result.Fail(new MediaNotFoundError());
         }
+
+        return new MetaMediaModel(
+            articleId,
+            mediaId,
+            fileInfo.Metadata["type"].AsString,
+            fileInfo.Metadata["alt"].AsString
+        );
+    }
+
+    public async Task<IEnumerable<MetaMediaModel>> GetAllMetaByArticle(
+        Guid articleId,
+        CancellationToken cancellationToken)
+    {
+        var filesInfo = await FindByArticle(articleId, cancellationToken);
+
+        return filesInfo.Select(f => new MetaMediaModel(
+            Guid.Parse(f.Metadata["articleId"].AsString),
+            Guid.Parse(f.Metadata["mediaId"].AsString),
+            f.Metadata["type"].AsString,
+            f.Metadata["alt"].AsString
+        ));
+    }
+
+    public async Task<Result> UpdateMeta(
+        MetaMediaModel metaMedia,
+        CancellationToken cancellationToken)
+    {
+        var (articleId, mediaId, type, alt) = metaMedia;
+        var fileInfo = await Find(articleId, mediaId, cancellationToken);
+        if (await Find(articleId, mediaId, cancellationToken) is null)
+        {
+            return Result.Fail(new MediaNotFoundError());
+        }
+
+        var source = await _bucket.DownloadAsBytesAsync(fileInfo.Id, cancellationToken: cancellationToken);
 
         var options = new GridFSUploadOptions
         {
-            Metadata = new BsonDocument
+            Metadata =
             {
-                { "contentType", contentType }
+                { "articleId", articleId },
+                { "mediaId", mediaId },
+                { "type", fileInfo.Metadata["type"].AsString },
+                { "alt", alt ?? fileInfo.Metadata["alt"].AsString }
             }
         };
-        await _bucket.UploadFromBytesAsync($"{articleId}.{fileId}", source, options, cancellationToken);
+        var filename = $"{articleId}.{mediaId}";
+        await _bucket.UploadFromBytesAsync(filename, source, options, cancellationToken);
 
-        return fileId;
+        return Result.Ok();
     }
 
-    public async Task<OneOf<Guid, FileNotFoundError>> Delete(Guid articleId, Guid fileId,
-        CancellationToken cancellationToken)
+
+    public async Task<Result> Delete(Guid articleId, Guid mediaId, CancellationToken cancellationToken)
     {
-        var fileInfo = await FindFileInfo(articleId, fileId, cancellationToken);
+        var fileInfo = await Find(articleId, mediaId, cancellationToken);
         if (fileInfo is null)
         {
-            return new FileNotFoundError();
+            return Result.Fail(new MediaNotFoundError());
         }
 
         await _bucket.DeleteAsync(fileInfo.Id, cancellationToken);
 
-        return fileId;
+        return Result.Ok();
     }
 
-    public async Task DeleteAllByArticleId(Guid articleId, CancellationToken cancellationToken)
+    public async Task DeleteAllByArticle(Guid articleId, CancellationToken cancellationToken)
     {
-        foreach (var fileInfo in await FindFileByArticleId(articleId, cancellationToken))
+        foreach (var fileInfo in await FindByArticle(articleId, cancellationToken))
         {
             await _bucket.DeleteAsync(fileInfo.Id, cancellationToken);
         }
     }
 
-    private async Task<GridFSFileInfo?> FindFileInfo(
-        Guid articleId,
-        Guid fileId,
-        CancellationToken cancellationToken = default)
+    private async Task<GridFSFileInfo?> Find(Guid articleId, Guid mediaId, CancellationToken cancellationToken)
     {
-        var filename = $"{articleId}.{fileId}";
-
+        var filename = $"{articleId}.{mediaId}";
         var filter = Builders<GridFSFileInfo>.Filter.Eq(f => f.Filename, filename);
-        var sort = Builders<GridFSFileInfo>.Sort.Descending(f => f.UploadDateTime);
-        var options = new GridFSFindOptions
-        {
-            Limit = 1,
-            Sort = sort
-        };
 
-        using var cursor = await _bucket.FindAsync(filter, options, cancellationToken);
-        return (await cursor.ToListAsync(cancellationToken)).FirstOrDefault();
+        using var cursor = await _bucket.FindAsync(filter, cancellationToken: cancellationToken);
+        return cursor.FirstOrDefault(cancellationToken);
     }
 
-    private async Task<IEnumerable<GridFSFileInfo>> FindFileByArticleId(
-        Guid articleId,
-        CancellationToken cancellationToken = default)
+    private async Task<IEnumerable<GridFSFileInfo>> FindByArticle(Guid articleId, CancellationToken cancellationToken)
     {
-        var filter = Builders<GridFSFileInfo>.Filter.Exists(f => f.Filename.StartsWith(articleId.ToString()));
+        var filter = Builders<GridFSFileInfo>.Filter
+            .Eq(f => f.Metadata["articleId"], articleId);
 
         using var cursor = await _bucket.FindAsync(filter, cancellationToken: cancellationToken);
         return await cursor.ToListAsync(cancellationToken);
