@@ -2,6 +2,7 @@
 using GameNews.MediaStorage.Domain.Errors;
 using GameNews.MediaStorage.Domain.Interfaces;
 using GameNews.MediaStorage.Domain.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
 
@@ -31,7 +32,7 @@ public sealed class StorageRepository : IStorageRepository
     {
         var options = new GridFSUploadOptions
         {
-            Metadata =
+            Metadata = new BsonDocument
             {
                 { "articleId", articleId },
                 { "mediaId", mediaId },
@@ -88,8 +89,8 @@ public sealed class StorageRepository : IStorageRepository
         var filesInfo = await FindByArticle(articleId, cancellationToken);
 
         return filesInfo.Select(f => new MetaMediaModel(
-            Guid.Parse(f.Metadata["articleId"].AsString),
-            Guid.Parse(f.Metadata["mediaId"].AsString),
+            f.Metadata["articleId"].AsGuid,
+            f.Metadata["mediaId"].AsGuid,
             f.Metadata["type"].AsString,
             f.Metadata["alt"].AsString
         ));
@@ -110,7 +111,7 @@ public sealed class StorageRepository : IStorageRepository
 
         var options = new GridFSUploadOptions
         {
-            Metadata =
+            Metadata = new BsonDocument
             {
                 { "articleId", articleId },
                 { "mediaId", mediaId },
@@ -148,8 +149,10 @@ public sealed class StorageRepository : IStorageRepository
 
     private async Task<GridFSFileInfo?> Find(Guid articleId, Guid mediaId, CancellationToken cancellationToken)
     {
-        var filename = $"{articleId}.{mediaId}";
-        var filter = Builders<GridFSFileInfo>.Filter.Eq(f => f.Filename, filename);
+        var filter = Builders<GridFSFileInfo>.Filter.And(
+            Builders<GridFSFileInfo>.Filter.Eq(f => f.Metadata["articleId"], articleId),
+            Builders<GridFSFileInfo>.Filter.Eq(f => f.Metadata["mediaId"], mediaId)
+        );
 
         using var cursor = await _bucket.FindAsync(filter, cancellationToken: cancellationToken);
         return cursor.FirstOrDefault(cancellationToken);

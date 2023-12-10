@@ -20,8 +20,8 @@ public sealed class MediaController(
     public async Task<Results<Ok<SaveResponse>, ForbidHttpResult>> Save(
         [FromRoute] Guid articleId,
         [FromHeader(Name = "Content-Type")] string type,
-        [FromHeader(Name = "UserId")] string userId,
-        [FromHeader(Name = "UserRole")] string userRole,
+        [FromHeader] string userId,
+        [FromHeader] string userRole,
         CancellationToken cancellationToken)
     {
         var user = new UserModel(userId, userRole);
@@ -42,8 +42,8 @@ public sealed class MediaController(
     public async Task<Results<Ok, ForbidHttpResult, NotFound>> UpdateMeta(
         [FromRoute] Guid articleId,
         [FromRoute] Guid mediaId,
-        [FromHeader(Name = "UserId")] string userId,
-        [FromHeader(Name = "UserRole")] string userRole,
+        [FromHeader] string userId,
+        [FromHeader] string userRole,
         UpdateMetaRequest request,
         CancellationToken cancellationToken)
     {
@@ -70,7 +70,7 @@ public sealed class MediaController(
     }
 
     [HttpGet("{articleId:Guid}/{mediaId:Guid}")]
-    public async Task<Results<Ok<FileResult>, NotFound>> Get(
+    public async Task<Results<FileContentHttpResult, NotFound>> Get(
         [FromRoute] Guid articleId,
         [FromRoute] Guid mediaId,
         CancellationToken cancellationToken)
@@ -78,9 +78,9 @@ public sealed class MediaController(
         var result = await storageService.Get(articleId, mediaId, cancellationToken);
         if (result is { IsSuccess: true, Value: var media })
         {
-            return TypedResults.Ok<FileResult>(File(media.Source, media.ContentType));
+            return TypedResults.File(media.Source, media.ContentType);
         }
-
+        
         return TypedResults.NotFound();
     }
 
@@ -117,12 +117,12 @@ public sealed class MediaController(
             m.Alt ?? "")));
     }
 
-    [HttpGet("{articleId:Guid}/{mediaId:Guid}")]
+    [HttpDelete("{articleId:Guid}/{mediaId:Guid}")]
     public async Task<Results<Ok, NotFound, ForbidHttpResult>> Delete(
         [FromRoute] Guid articleId,
         [FromRoute] Guid mediaId,
-        [FromHeader(Name = "UserId")] string userId,
-        [FromHeader(Name = "UserRole")] string userRole,
+        [FromHeader] string userId,
+        [FromHeader] string userRole,
         CancellationToken cancellationToken)
     {
         var user = new UserModel(userId, userRole);
@@ -136,15 +136,15 @@ public sealed class MediaController(
         {
             return TypedResults.Forbid();
         }
-
+        
         return TypedResults.NotFound();
     }
 
-    [HttpGet("{articleId:Guid}")]
+    [HttpDelete("{articleId:Guid}")]
     public async Task<Results<Ok, ForbidHttpResult>> DeleteByArticle(
         [FromRoute] Guid articleId,
-        [FromHeader(Name = "UserId")] string userId,
-        [FromHeader(Name = "UserRole")] string userRole,
+        [FromHeader] string userId,
+        [FromHeader] string userRole,
         CancellationToken cancellationToken)
     {
         var user = new UserModel(userId, userRole);
