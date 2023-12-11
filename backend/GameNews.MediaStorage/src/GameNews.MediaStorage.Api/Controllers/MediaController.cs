@@ -32,7 +32,7 @@ public sealed class MediaController(
 
         if (result is { IsSuccess: true, Value: var value })
         {
-            return TypedResults.Ok(new SaveResponse(value.articleId, value.articleId));
+            return TypedResults.Ok(new SaveResponse(value.articleId, value.mediaId));
         }
 
         return TypedResults.Forbid();
@@ -91,6 +91,7 @@ public sealed class MediaController(
         CancellationToken cancellationToken)
     {
         var result = await storageService.GetMeta(articleId, mediaId, cancellationToken);
+        
         if (result is { IsSuccess: true, Value: var metaMedia })
         {
             return TypedResults.Ok(new GetMetaResponse(

@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  article:
+    build:
+      dockerfile: src/GameNews.Articles.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - article-db
+
+  article-db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: ${ARTICLES_DB_USER}
+      POSTGRES_PASSWORD: ${ARTICLES_DB_PASSWORD}
+      POSTGRES_DB: ${ARTICLES_DB_NAME}
+    volumes:
+      - article-db:/var/lib/postgresql/data
+
+volumes:
+  article-db:
+    driver: local

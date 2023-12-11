@@ -13,10 +13,5 @@ GET https://discord.com/oauth2/authorize?client_id=742333635130163270&redirect_u
 GET http://localhost:8080/api/v1/auth/me
 Authorization: wwr=wfw; wafgw=b;
 
-### Username
-
-GET http://localhost:8080/test
-Authorization: Bearer cUJKrhBLEQTETQlcKl8jFGY1CJBXG2
-
 ### 
 GET http://localhost:8080/api/auth/v1/internal/token/validate

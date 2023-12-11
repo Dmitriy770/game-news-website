@@ -73,7 +73,7 @@ public sealed class StorageRepository : IStorageRepository
         {
             return Result.Fail(new MediaNotFoundError());
         }
-
+        
         return new MetaMediaModel(
             articleId,
             mediaId,

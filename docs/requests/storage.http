@@ -1,10 +1,10 @@
-@host="http://localhost:8080"
+@host="http:\\localhost:8080"
 
 ### upload
 
-POST {{host}}/api/storage/media-files/4eaa77f1-a914-4196-8353-4d28a58af727
+POST {{host}}/api/storage/media-files/dcd6e879-48e4-478e-b60d-a1cd441f45f4
 
-Authorization: Bearer {token}
+Authorization: Bearer hDF4WijRAwr8sNBktTZpcdY1y3cxwI
 
 > files/Shablon.png
 
@@ -20,7 +20,7 @@ Authorization: Bearer {token}
 
 ### get
 
-GET {{host}}/api/storage/media-files/4eaa77f1-a914-4196-8353-4d28a58af727/4eaa77f1-a914-4196-8353-4d28a58af727
+GET {{host}}/api/storage/media-files/dcd6e879-48e4-478e-b60d-a1cd441f45f4/752f8618-3992-4ae9-9320-cb6bbaffabd8
 
 ### get meta
 

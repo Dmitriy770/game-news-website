@@ -1,0 +1,15 @@
+﻿version: '3.9'
+
+services:
+  storage:
+    build:
+      dockerfile: src/GameNews.MediaStorage.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  storage-db:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MEDIA_STORAGE_DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MEDIA_STORAGE_DB_PASSWORD}
+  

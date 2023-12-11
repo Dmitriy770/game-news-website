@@ -1,0 +1,10 @@
+﻿version: '3.9'
+
+services: 
+  auth:
+    build:
+      dockerfile: src/GameNews.OAuth.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DiscordApiOptions__ClientId: ${DISCORD_CLIENT_ID}
+      DiscordApiOptions__ClientSecret: ${DISCORD_CLIENT_SECRET}
