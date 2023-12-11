@@ -1,0 +1,39 @@
+@host="http://localhost:8080"
+
+### upload
+
+POST {{host}}/api/storage/media-files/4eaa77f1-a914-4196-8353-4d28a58af727
+
+Authorization: Bearer {token}
+
+> files/Shablon.png
+
+### update meta
+
+PUT /api/storage/media-file/{articleId:guid}/{id:guid}/meta
+
+Authorization: Bearer {token}
+
+{
+    "alt": "описания изображения "
+}
+
+### get
+
+GET {{host}}/api/storage/media-files/4eaa77f1-a914-4196-8353-4d28a58af727/4eaa77f1-a914-4196-8353-4d28a58af727
+
+### get meta
+
+GET {{host}}/api/storage/media-files/{articleId:guid}/{id:guid}/meta
+
+### get all meta by article
+
+GET {{host}}/api/storage/media-files/{articleId:guid}/meta
+
+### delete
+
+DELETE {{host}}/api/storage/media-file/{articleId:guid}/{id:guid}
+
+### delete all by article
+
+DELETE {{host}}/api/storage/media-file/{articleId:guid}

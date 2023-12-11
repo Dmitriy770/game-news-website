@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GameNews.MediaStorage.Api.Controllers;
 
 [ApiController]
-[Route("media-file")]
+[Route("media-files")]
 public sealed class MediaController(
     IStorageService storageService
 ) : ControllerBase
