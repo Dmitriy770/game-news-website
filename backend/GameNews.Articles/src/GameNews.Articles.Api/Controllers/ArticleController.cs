@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GameNews.Articles.Api.Controllers;
 
 [ApiController]
-[Route("api/v1/article")]
+[Route("article")]
 public class ArticleController : ControllerBase
 {
     

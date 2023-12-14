@@ -29,7 +29,7 @@ public class AuthService : IAuthService
         var guildMember = await _discordClient.GetGuildMember(accessToken, cancellationToken);
 
         var guild = guilds.FirstOrDefault(g => g.Id.CompareTo("734819128916967494") == 0);
-        var role = "user";
+        var role = "User";
         if (guildMember is not null && guildMember.Roles.Any(r => r.CompareTo("789511663459369001") == 0))
         {
             role = "Author";
