@@ -2,6 +2,8 @@
 using GameNews.MediaStorage.Domain.Errors;
 using GameNews.MediaStorage.Domain.Interfaces;
 using GameNews.MediaStorage.Domain.Models;
+using GameNews.MediaStorage.Infrastructure.Options;
+using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
@@ -12,9 +14,10 @@ public sealed class StorageRepository : IStorageRepository
 {
     private readonly GridFSBucket _bucket;
 
-    public StorageRepository()
+    public StorageRepository(IOptions<MongoOptions> mongoOptions)
     {
-        const string connectionString = "mongodb://root:password@storage-db:27017/?retryWrites=true&w=majority";
+        var (user, password) = mongoOptions.Value;
+        var connectionString = $"mongodb://{user}:{password}@storage-db:27017/?retryWrites=true&w=majority";
         var client = new MongoClient(connectionString);
 
         _bucket = new GridFSBucket(client.GetDatabase("game-news-media"), new GridFSBucketOptions
@@ -73,7 +76,7 @@ public sealed class StorageRepository : IStorageRepository
         {
             return Result.Fail(new MediaNotFoundError());
         }
-        
+
         return new MetaMediaModel(
             articleId,
             mediaId,

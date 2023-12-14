@@ -25,7 +25,9 @@ public sealed class MediaController(
         CancellationToken cancellationToken)
     {
         var user = new UserModel(userId, userRole);
-        var source = (await Request.BodyReader.ReadAsync(cancellationToken)).Buffer.ToArray();
+        var buffer = (await Request.BodyReader.ReadAsync(cancellationToken)).Buffer;
+        var source = buffer.ToArray();
+        Request.BodyReader.AdvanceTo(buffer.Start);
         var saveDto = new SaveMediaDto(articleId, Guid.NewGuid(), type, source);
 
         var result = await storageService.Save(saveDto, user, cancellationToken);
@@ -80,7 +82,7 @@ public sealed class MediaController(
         {
             return TypedResults.File(media.Source, media.ContentType);
         }
-        
+
         return TypedResults.NotFound();
     }
 
@@ -91,7 +93,7 @@ public sealed class MediaController(
         CancellationToken cancellationToken)
     {
         var result = await storageService.GetMeta(articleId, mediaId, cancellationToken);
-        
+
         if (result is { IsSuccess: true, Value: var metaMedia })
         {
             return TypedResults.Ok(new GetMetaResponse(
@@ -137,7 +139,7 @@ public sealed class MediaController(
         {
             return TypedResults.Forbid();
         }
-        
+
         return TypedResults.NotFound();
     }
 
