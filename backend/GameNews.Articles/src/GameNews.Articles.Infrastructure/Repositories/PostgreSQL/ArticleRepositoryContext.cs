@@ -8,7 +8,9 @@ public sealed class ArticleRepositoryContext : DbContext
     public DbSet<ArticleEntity> Articles { get; set; } = null!;
     public DbSet<TagEntity> Tags { get; set; } = null!;
 
-    public ArticleRepositoryContext()
+    public ArticleRepositoryContext(
+        DbContextOptions<ArticleRepositoryContext> options
+    ) : base(options)
     {
         Database.EnsureCreated();
     }

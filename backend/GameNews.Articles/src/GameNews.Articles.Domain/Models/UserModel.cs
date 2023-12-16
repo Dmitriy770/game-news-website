@@ -1,5 +1,5 @@
 using FluentResults;
-using GameNews.Articles.Domain.ValueTypes;
+using GameNews.Articles.Domain.Models.ValueTypes;
 
 namespace GameNews.Articles.Domain.Models;
 

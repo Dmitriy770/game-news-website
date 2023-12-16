@@ -21,10 +21,4 @@
       <ProjectReference Include="..\GameNews.Articles.Domain\GameNews.Articles.Domain.csproj" />
     </ItemGroup>
 
-
-
-    <ItemGroup>
-      <Folder Include="Repositories\PostgreSQL\Migrations\" />
-    </ItemGroup>
-
 </Project>

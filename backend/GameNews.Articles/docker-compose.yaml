@@ -5,7 +5,10 @@ services:
     build:
       dockerfile: src/GameNews.Articles.Api/Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      ASPNETCORE_ENVIRONMENT: Development
+      PostgresOptions__User: ${ARTICLES_DB_USER}
+      PostgresOptions__Password: ${ARTICLES_DB_PASSWORD}
+      PostgresOptions__Database: ${ARTICLES_DB_NAME}
     depends_on:
       - article-db
 

@@ -1,6 +1,6 @@
 ﻿namespace GameNews.Articles.Api.Requests;
 
-public record CreateTagRequest(
+public record UpdateTagRequest(
     string Name,
     string Description
 );

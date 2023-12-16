@@ -1,0 +1,13 @@
+@host = http://localhost:8080
+@token = hDF4WijRAwr8sNBktTZpcdY1y3cxwI
+
+###  create tag
+
+POST {{host}}/api/article/tags
+
+Authorization: Bearer {{token}}
+
+{
+    "name": "werqwfgwq",
+    "description": "wew wfwqwg"
+}

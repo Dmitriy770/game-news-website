@@ -10,5 +10,5 @@ public class TagEntity
     public Guid Id { get; set; } = Guid.Empty;
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public List<ArticleEntity> Articles { get; set; } = new();
+    public List<ArticleEntity> Articles { get; set; } = [];
 }
