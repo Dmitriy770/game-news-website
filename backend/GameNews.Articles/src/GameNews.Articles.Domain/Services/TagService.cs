@@ -14,7 +14,7 @@ public sealed class TagService(
 {
     public async Task<Result<Guid>> Save(TagModel tag, UserModel user, CancellationToken cancellationToken)
     {
-        if (user.Role.Value is not RoleType.Administrator)
+        if (user.Role.Value is not (RoleType.Author or RoleType.Administrator))
         {
             return Result.Fail(new AccessDeniedError());
         }
@@ -26,7 +26,7 @@ public sealed class TagService(
 
     public async Task<Result> Update(UpdateTagDto tagDto, UserModel user, CancellationToken cancellationToken)
     {
-        if (user.Role.Value is not RoleType.Administrator)
+        if (user.Role.Value is not (RoleType.Author or RoleType.Administrator))
         {
             return Result.Fail(new AccessDeniedError());
         }
@@ -56,7 +56,7 @@ public sealed class TagService(
 
     public async Task<Result> Delete(Guid id, UserModel user, CancellationToken cancellationToken)
     {
-        if (user.Role.Value is not RoleType.Administrator)
+        if (user.Role.Value is not (RoleType.Author or RoleType.Administrator))
         {
             return Result.Fail(new AccessDeniedError());
         }

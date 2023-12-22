@@ -39,9 +39,9 @@ public sealed class ArticleRepository(
         return Result.Ok();
     }
 
-    public async Task<Result<TagModel>> GetTagById(Guid id, CancellationToken cancellationToken)
+    public async Task<Result<TagModel>> GetTagById(Guid tagId, CancellationToken cancellationToken)
     {
-        var tagEntity = await dbContext.Tags.FindAsync(id, cancellationToken);
+        var tagEntity = await dbContext.Tags.FindAsync(tagId, cancellationToken);
 
         if (tagEntity is null)
         {
@@ -69,5 +69,85 @@ public sealed class ArticleRepository(
 
             yield return result.Value;
         }
+    }
+
+    public async Task<Result> SaveArticle(ArticleModel article, CancellationToken cancellationToken)
+    {
+        if (await dbContext.Articles.FindAsync(article.Id, cancellationToken) is null)
+        {
+            await dbContext.Articles.AddAsync(new ArticleEntity
+                {
+                    Id = article.Id,
+                    Title = article.Title,
+                    PreviewText = article.PreviewText,
+                    PreviewMediaId = article.PreviewMediaId,
+                    Tags = article.Tags.Select(t => new TagEntity
+                    {
+                        Id = t.Id,
+                        Name = t.Name,
+                        Description = t.Description
+                    }).ToList(),
+                    AuthorId = article.AuthorId,
+                    CreationDate = article.CreationDate,
+                    IsVisible = article.IsVisible,
+                    Content = article.Content
+                },
+                cancellationToken);
+        }
+        else
+        {
+            await dbContext.Articles.Where(a => a.Id == article.Id)
+                .ExecuteUpdateAsync(s => s
+                        .SetProperty(a => a.Title, article.Title)
+                        .SetProperty(a => a.PreviewText, article.PreviewText)
+                        .SetProperty(a => a.PreviewMediaId, article.PreviewMediaId)
+                        .SetProperty(a => a.Tags, article.Tags.Select(t => new TagEntity
+                        {
+                            Id = t.Id,
+                            Name = t.Name,
+                            Description = t.Description
+                        }).ToList())
+                        .SetProperty(a => a.IsVisible, article.IsVisible)
+                        .SetProperty(a => a.Content, article.Content),
+                    cancellationToken);
+        }
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return Result.Ok();
+    }
+
+    public async Task<Result<ArticleModel>> GetArticleById(Guid articleId, CancellationToken cancellationToken)
+    {
+        var articleEntity = await dbContext.Articles.FindAsync(articleId, cancellationToken);
+
+        if (articleEntity is null)
+        {
+            return Result.Fail(new ArticleNotFoundError());
+        }
+
+        var result = ArticleModel.Create(
+            articleEntity.Id,
+            articleEntity.Title,
+            articleEntity.PreviewMediaId,
+            articleEntity.PreviewText,
+            articleEntity.Tags.Select(t => TagModel.Create(t.Id, t.Name, t.Description).Value).ToList(),
+            articleEntity.CreationDate,
+            articleEntity.AuthorId,
+            articleEntity.IsVisible,
+            articleEntity.Content
+        );
+        if (result.IsFailed)
+        {
+            throw new InvalidDataInDbException();
+        }
+
+        return result.Value;
+    }
+
+    public async Task<Result> DeleteArticle(Guid articleId, CancellationToken cancellationToken)
+    {
+        await dbContext.Articles.Where(a => a.Id == articleId).ExecuteDeleteAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return Result.Ok();
     }
 }

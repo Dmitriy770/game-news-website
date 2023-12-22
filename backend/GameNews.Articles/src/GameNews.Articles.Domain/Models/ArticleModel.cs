@@ -74,4 +74,23 @@ public record ArticleModel
             content
         );
     }
+
+    public static Result<ArticleModel> Create(
+        Guid id,
+        DateTime creationDate,
+        string authorId
+    )
+    {
+        return new ArticleModel(
+            id,
+            "",
+            null,
+            null,
+            [],
+            creationDate,
+            authorId,
+            false,
+            ""
+        );
+    }
 }
