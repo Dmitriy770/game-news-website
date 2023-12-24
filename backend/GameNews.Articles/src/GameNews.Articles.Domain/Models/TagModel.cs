@@ -8,8 +8,14 @@ public record TagModel
     public Guid Id { get; }
     public string Name { get; }
     public string Description { get; }
+    
+    public List<ArticleModel> Articles { get; set; }
 
-    private TagModel(Guid id, string name, string description)
+    public TagModel()
+    {
+        
+    }
+    public TagModel(Guid id, string name, string description)
     {
         Id = id;
         Name = name;

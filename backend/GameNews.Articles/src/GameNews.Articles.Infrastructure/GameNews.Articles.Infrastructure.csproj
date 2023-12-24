@@ -18,7 +18,7 @@
 
 
     <ItemGroup>
-      <ProjectReference Include="..\GameNews.Articles.Domain\GameNews.Articles.Domain.csproj" />
+      <ProjectReference Include="..\GameNews.Articles.Application\GameNews.Articles.Application.csproj" />
     </ItemGroup>
 
 </Project>

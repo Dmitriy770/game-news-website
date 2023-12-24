@@ -5,17 +5,31 @@ namespace GameNews.Articles.Domain.Models;
 
 public record ArticleModel
 {
-    public Guid Id { get; }
-    public string Title { get; }
-    public Guid? PreviewMediaId { get; }
-    public string? PreviewText { get; }
-    public List<TagModel> Tags { get; }
-    public DateTime CreationDate { get; }
-    public string AuthorId { get; }
-    public bool IsVisible { get; }
-    public string Content { get; }
+    public Guid Id { get; init; }
+    public string Title { get; init;}
+    public Guid? PreviewMediaId { get; init;}
+    public string? PreviewText { get; init;}
+    public List<TagModel> Tags { get; init;}
+    public DateTime CreationDate { get; init;}
+    public string AuthorId { get; init;}
+    public bool IsVisible { get; set; }
+    public string Content { get; init;}
 
-    private ArticleModel(
+    public void Hide()
+    {
+        IsVisible = false;
+    }
+
+    public void Show()
+    {
+        IsVisible = true;
+    }
+
+    public ArticleModel()
+    {
+        
+    }
+    public ArticleModel(
         Guid id,
         string title,
         Guid? previewMediaId,
@@ -83,7 +97,7 @@ public record ArticleModel
     {
         return new ArticleModel(
             id,
-            "",
+            "New article",
             null,
             null,
             [],

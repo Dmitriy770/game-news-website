@@ -1,4 +1,6 @@
-﻿using GameNews.Articles.Domain.Interfaces;
+﻿using System.Reflection;
+using GameNews.Articles.Application.Queries;
+using GameNews.Articles.Domain.Interfaces;
 using GameNews.Articles.Domain.Services;
 using GameNews.Articles.Domain.Services.Interfaces;
 using GameNews.Articles.Infrastructure.Options;
@@ -24,6 +26,7 @@ public static class ServiceCollectionExtensions
                 $"Host={psConfig.Host};Port={psConfig.Port};Database={psConfig.Database};Username={psConfig.User};Password={psConfig.Password}");
         });
         services.AddTransient<IArticleRepository, ArticleRepository>();
+        services.AddTransient<Application.Interfaces.IArticleRepository, ArticleRepository>();
 
         return services;
     }
@@ -31,6 +34,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
         services.AddTransient<ITagService, TagService>();
+        services.AddMediatR(c => c.RegisterServicesFromAssembly(typeof(GetArticleQuery).Assembly));
         return services;
     }
 }

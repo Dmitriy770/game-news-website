@@ -10,7 +10,7 @@ namespace GameNews.Articles.Infrastructure.Repositories.PostgreSQL;
 
 public sealed class ArticleRepository(
     ArticleRepositoryContext dbContext
-) : IArticleRepository
+) : IArticleRepository, Application.Interfaces.IArticleRepository
 {
     public async Task<Result> SaveTag(TagModel tag, CancellationToken cancellationToken)
     {
@@ -57,6 +57,12 @@ public sealed class ArticleRepository(
         return result.Value;
     }
 
+    public async Task<IEnumerable<TagModel>> GetTagsByIds(List<Guid> tagIds, CancellationToken cancellationToken)
+    {
+        var tagEntities = await dbContext.Tags.Where(t => tagIds.Contains(t.Id)).ToListAsync(cancellationToken);
+        return tagEntities.Select(t => TagModel.Create(t.Id, t.Name, t.Description).Value).ToList();
+    }
+
     public async IAsyncEnumerable<TagModel> GetAllTags(CancellationToken cancellationToken)
     {
         await foreach (var tag in dbContext.Tags)
@@ -71,83 +77,75 @@ public sealed class ArticleRepository(
         }
     }
 
-    public async Task<Result> SaveArticle(ArticleModel article, CancellationToken cancellationToken)
+    public async Task AddArticle(ArticleModel article, CancellationToken cancellationToken)
     {
-        if (await dbContext.Articles.FindAsync(article.Id, cancellationToken) is null)
-        {
-            await dbContext.Articles.AddAsync(new ArticleEntity
-                {
-                    Id = article.Id,
-                    Title = article.Title,
-                    PreviewText = article.PreviewText,
-                    PreviewMediaId = article.PreviewMediaId,
-                    Tags = article.Tags.Select(t => new TagEntity
-                    {
-                        Id = t.Id,
-                        Name = t.Name,
-                        Description = t.Description
-                    }).ToList(),
-                    AuthorId = article.AuthorId,
-                    CreationDate = article.CreationDate,
-                    IsVisible = article.IsVisible,
-                    Content = article.Content
-                },
-                cancellationToken);
-        }
-        else
-        {
-            await dbContext.Articles.Where(a => a.Id == article.Id)
-                .ExecuteUpdateAsync(s => s
-                        .SetProperty(a => a.Title, article.Title)
-                        .SetProperty(a => a.PreviewText, article.PreviewText)
-                        .SetProperty(a => a.PreviewMediaId, article.PreviewMediaId)
-                        .SetProperty(a => a.Tags, article.Tags.Select(t => new TagEntity
-                        {
-                            Id = t.Id,
-                            Name = t.Name,
-                            Description = t.Description
-                        }).ToList())
-                        .SetProperty(a => a.IsVisible, article.IsVisible)
-                        .SetProperty(a => a.Content, article.Content),
-                    cancellationToken);
-        }
-
+        await dbContext.Articles.AddAsync(article, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
-        return Result.Ok();
     }
 
-    public async Task<Result<ArticleModel>> GetArticleById(Guid articleId, CancellationToken cancellationToken)
+    public async Task UpdateArticle(ArticleModel article, CancellationToken cancellationToken)
     {
-        var articleEntity = await dbContext.Articles.FindAsync(articleId, cancellationToken);
-
-        if (articleEntity is null)
-        {
-            return Result.Fail(new ArticleNotFoundError());
-        }
-
-        var result = ArticleModel.Create(
-            articleEntity.Id,
-            articleEntity.Title,
-            articleEntity.PreviewMediaId,
-            articleEntity.PreviewText,
-            articleEntity.Tags.Select(t => TagModel.Create(t.Id, t.Name, t.Description).Value).ToList(),
-            articleEntity.CreationDate,
-            articleEntity.AuthorId,
-            articleEntity.IsVisible,
-            articleEntity.Content
+        await dbContext.Articles.Where(a => a.Id == article.Id).ExecuteUpdateAsync(
+            s => s
+                .SetProperty(a => a.Title, article.Title)
+                .SetProperty(a => a.PreviewMediaId, article.PreviewMediaId)
+                .SetProperty(a => a.PreviewText, article.PreviewText)
+                // .SetProperty(a => a.Tags, article.Tags)
+                .SetProperty(a => a.CreationDate, article.CreationDate)
+                .SetProperty(a => a.AuthorId, article.AuthorId)
+                .SetProperty(a => a.IsVisible, article.IsVisible)
+                .SetProperty(a => a.Content, article.Content),
+            cancellationToken
         );
-        if (result.IsFailed)
-        {
-            throw new InvalidDataInDbException();
-        }
-
-        return result.Value;
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<Result> DeleteArticle(Guid articleId, CancellationToken cancellationToken)
+    public async Task DeleteArticle(Guid articleId, CancellationToken cancellationToken)
     {
         await dbContext.Articles.Where(a => a.Id == articleId).ExecuteDeleteAsync(cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
-        return Result.Ok();
+    }
+
+    public async Task<ArticleModel?> GetArticleById(Guid articleId, CancellationToken cancellationToken)
+    {
+        return await dbContext.Articles.FindAsync(articleId, cancellationToken);
+    }
+
+    public async Task<IEnumerable<ArticleModel>> GetHiddenArticlesByAuthor(
+        string authorId,
+        string? query,
+        int skip,
+        int take,
+        CancellationToken cancellationToken)
+    {
+        return await dbContext.Articles
+            .Where(a => !a.IsVisible)
+            .Where(a => a.AuthorId == authorId)
+            .Where(a => query == null || a.Title.Contains(query))
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<ArticleModel>> GetHiddenArticles(string? query, int skip, int take,
+        CancellationToken cancellationToken)
+    {
+        return await dbContext.Articles
+            .Where(a => !a.IsVisible)
+            .Where(a => query == null || a.Title.Contains(query))
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<ArticleModel>> GetShownArticles(string? query, int skip, int take,
+        CancellationToken cancellationToken)
+    {
+        return await dbContext.Articles
+            .Where(a => a.IsVisible)
+            .Where(a => query == null || a.Title.Contains(query))
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
     }
 }

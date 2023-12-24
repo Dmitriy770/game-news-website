@@ -12,10 +12,4 @@ public interface IArticleRepository
     public Task<Result<TagModel>> GetTagById(Guid tagId, CancellationToken cancellationToken);
 
     public IAsyncEnumerable<TagModel> GetAllTags(CancellationToken cancellationToken);
-
-    public Task<Result> SaveArticle(ArticleModel article, CancellationToken cancellationToken);
-
-    public Task<Result<ArticleModel>> GetArticleById(Guid articleId, CancellationToken cancellationToken);
-
-    public Task<Result> DeleteArticle(Guid articleId, CancellationToken cancellationToken);
 }

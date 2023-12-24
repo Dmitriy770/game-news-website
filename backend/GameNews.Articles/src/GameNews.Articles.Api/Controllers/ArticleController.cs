@@ -1,12 +1,9 @@
-using GameNews.Articles.Api.Exceptions;
+using GameNews.Articles.Api.Extensions;
 using GameNews.Articles.Api.Requests;
-using GameNews.Articles.Api.Responses;
-using GameNews.Articles.Domain.DTOs;
-using GameNews.Articles.Domain.Errors;
-using GameNews.Articles.Domain.Models;
-using GameNews.Articles.Domain.Models.ValueTypes;
-using GameNews.Articles.Domain.Services.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
+using GameNews.Articles.Application.Commands;
+using GameNews.Articles.Application.Queries;
+using GameNews.Articles.Application.Shared;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameNews.Articles.Api.Controllers;
@@ -14,150 +11,141 @@ namespace GameNews.Articles.Api.Controllers;
 [ApiController]
 [Route("articles")]
 public sealed class ArticleController(
-    IArticleService articleService
+    ISender sender
 ) : ControllerBase
 {
     [HttpPost]
-    public async Task<Results<Ok<CreateArticleResponse>, BadRequest, ForbidHttpResult>> Create(
+    public async Task<IActionResult> Create(
         [FromHeader] string userId,
-        [FromHeader] string userRole,
         [FromHeader] string username,
+        [FromHeader] string userRole,
         CancellationToken cancellationToken
     )
     {
-        var roleResult = RoleType.Create(userRole);
-        if (roleResult.IsFailed)
-        {
-            return TypedResults.BadRequest();
-        }
+        var result = await sender.Send(new CreateArticleCommand(
+                Guid.NewGuid(),
+                DateTime.UtcNow,
+                new User(userId, username, userRole)
+            ),
+            cancellationToken);
 
-        var userResult = UserModel.Create(userId, username, roleResult.Value);
-        if (userResult.IsFailed)
-        {
-            return TypedResults.BadRequest();
-        }
-
-        var articleResult = ArticleModel.Create(Guid.NewGuid(), DateTime.Now, userResult.Value.Id);
-        if (articleResult.IsFailed)
-        {
-            return TypedResults.BadRequest();
-        }
-
-        var createResult = await articleService.Create(articleResult.Value, userResult.Value, cancellationToken);
-        if (createResult is { IsSuccess: true, Value: var value })
-        {
-            return TypedResults.Ok(new CreateArticleResponse(value.Id, value.CreationDate, value.AuthorId));
-        }
-
-        if (createResult.HasError<AccessDeniedError>())
-        {
-            return TypedResults.Forbid();
-        }
-
-        throw new UnhandledErrorException();
+        return result.IsSuccess ? new OkObjectResult(result.Value) : result.Errors.ToActionResult();
     }
 
-    [HttpPut("id:guid")]
-    public async Task<Results<Ok, BadRequest, ForbidHttpResult>> Update(
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> Update(
         [FromRoute] Guid id,
         [FromHeader] string userId,
-        [FromHeader] string userRole,
         [FromHeader] string username,
+        [FromHeader] string userRole,
         UpdateArticleRequest request,
         CancellationToken cancellationToken
     )
     {
-        var roleResult = RoleType.Create(userRole);
-        if (roleResult.IsFailed)
-        {
-            return TypedResults.BadRequest();
-        }
-
-        var userResult = UserModel.Create(userId, username, roleResult.Value);
-        if (userResult.IsFailed)
-        {
-            return TypedResults.BadRequest();
-        }
-
-        var updateDto = new UpdateArticleDto(
+        var result = await sender.Send(new UpdateArticleCommand(
             id,
             request.Title,
-            request.PreviewText,
-            request.PreviewMediaId,
+            request.Content,
             request.Tags,
-            request.Content
-        );
+            new User(userId, username, userRole)
+        ), cancellationToken);
 
-        var updateResult = await articleService.Update(updateDto, userResult.Value, cancellationToken);
-        if (updateResult is { IsSuccess: true })
-        {
-            return TypedResults.Ok();
-        }
-
-        if (updateResult.HasError<AccessDeniedError>())
-        {
-            return TypedResults.Forbid();
-        }
-
-        throw new UnhandledErrorException();
+        return result.IsSuccess ? new OkResult() : result.Errors.ToActionResult();
     }
 
-    [HttpDelete("id:guid")]
-    public async Task<Results<Ok, BadRequest, ForbidHttpResult>> Delete(
+    [HttpPut("{id:guid}/preview")]
+    public async Task<IActionResult> UpdatePreview(
         [FromRoute] Guid id,
         [FromHeader] string userId,
-        [FromHeader] string userRole,
         [FromHeader] string username,
+        [FromHeader] string userRole,
+        UpdatePreviewArticleRequest request,
         CancellationToken cancellationToken
     )
     {
-        var roleResult = RoleType.Create(userRole);
-        if (roleResult.IsFailed)
-        {
-            return TypedResults.BadRequest();
-        }
+        var result = await sender.Send(new UpdatePreviewArticleCommand(
+            id,
+            request.PreviewMediaId,
+            request.PreviewText,
+            new User(userId, username, userRole)
+        ), cancellationToken);
 
-        var userResult = UserModel.Create(userId, username, roleResult.Value);
-        if (userResult.IsFailed)
-        {
-            return TypedResults.BadRequest();
-        }
-
-        var deleteResult = await articleService.Delete(id, userResult.Value, cancellationToken);
-        if (deleteResult is { IsSuccess: true })
-        {
-            return TypedResults.Ok();
-        }
-
-        if (deleteResult.HasError<AccessDeniedError>())
-        {
-            return TypedResults.Forbid();
-        }
-
-        throw new UnhandledErrorException();
+        return result.IsSuccess ? new OkResult() : result.Errors.ToActionResult();
     }
 
-    [HttpGet("id:guid")]
-    public async Task<Results<Ok<GetArticleResponse>, BadRequest, ForbidHttpResult>> GetById(
+    [HttpPatch("{id:guid}")]
+    public async Task<IActionResult> ChangeVisible(
         [FromRoute] Guid id,
+        [FromQuery] bool isVisible,
+        [FromHeader] string userId,
+        [FromHeader] string username,
+        [FromHeader] string userRole,
         CancellationToken cancellationToken
     )
     {
-        var result = await articleService.GetArticle(id, cancellationToken);
-        if (result is { IsSuccess: true, Value: var value })
-        {
-            return TypedResults.Ok(new GetArticleResponse(
-                value.Id,
-                value.Title,
-                value.CreationDate,
-                value.AuthorId,
-                value.IsVisible,
-                value.PreviewText,
-                value.PreviewMediaId,
-                value.Tags.Select(t => new Tag(t.Id, t.Name, t.Description)).ToList(),
-                value.Content));
-        }
+        var result = await sender.Send(new ChangeVisibilityArticleCommand(
+            id,
+            isVisible,
+            new User(userId, username, userRole)
+        ), cancellationToken);
 
-        throw new UnhandledErrorException();
+        return result.IsSuccess ? new OkResult() : result.Errors.ToActionResult();
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(
+        [FromRoute] Guid id,
+        [FromHeader] string userId,
+        [FromHeader] string username,
+        [FromHeader] string userRole,
+        CancellationToken cancellationToken
+    )
+    {
+        var result = await sender.Send(new DeleteArticleCommand(
+            id,
+            new User(userId, username, userRole)
+        ), cancellationToken);
+
+        return result.IsSuccess ? new OkResult() : result.Errors.ToActionResult();
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(
+        [FromRoute] Guid id,
+        [FromHeader] string userId,
+        [FromHeader] string username,
+        [FromHeader] string userRole,
+        CancellationToken cancellationToken
+    )
+    {
+        var result = await sender.Send(new GetArticleQuery(
+            id,
+            new User(userId, username, userRole)
+        ), cancellationToken);
+
+        return result.IsSuccess ? new OkObjectResult(result.Value) : result.Errors.ToActionResult();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetPreviews(
+        [FromQuery] int skip,
+        [FromQuery] int take,
+        [FromQuery] string? query,
+        [FromQuery] bool isVisible,
+        [FromHeader] string userId,
+        [FromHeader] string username,
+        [FromHeader] string userRole,
+        CancellationToken cancellationToken
+    )
+    {
+        var result = await sender.Send(new GetPreviewsQuery(
+            skip,
+            take,
+            isVisible,
+            query,
+            new User(userId, username, userRole)
+        ), cancellationToken);
+
+        return new OkObjectResult(result.ToList());
     }
 }
