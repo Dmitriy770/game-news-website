@@ -18,7 +18,7 @@ public sealed class TagController(
 ) : ControllerBase
 {
     [HttpPost]
-    public async Task<Results<Ok<CreateResponse>, BadRequest, ForbidHttpResult>> Create(
+    public async Task<Results<Ok<CreateTagResponse>, BadRequest, ForbidHttpResult>> Create(
         [FromHeader] string userId,
         [FromHeader] string userRole,
         [FromHeader] string username,
@@ -46,7 +46,7 @@ public sealed class TagController(
         var saveResult = await tagService.Save(tagResult.Value, userResult.Value, cancellationToken);
         if (saveResult is { IsSuccess: true, Value: var value })
         {
-            return TypedResults.Ok(new CreateResponse(value));
+            return TypedResults.Ok(new CreateTagResponse(value));
         }
 
         if (saveResult.HasError<AccessDeniedError>())

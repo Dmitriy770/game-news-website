@@ -1,5 +1,5 @@
 ﻿namespace GameNews.Articles.Api.Responses;
 
-public record CreateResponse(
+public record CreateTagResponse(
     Guid Id
 );

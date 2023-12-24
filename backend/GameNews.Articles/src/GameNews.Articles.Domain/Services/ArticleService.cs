@@ -5,12 +5,13 @@ using GameNews.Articles.Domain.Errors;
 using GameNews.Articles.Domain.Interfaces;
 using GameNews.Articles.Domain.Models;
 using GameNews.Articles.Domain.Models.ValueTypes;
+using GameNews.Articles.Domain.Services.Interfaces;
 
 namespace GameNews.Articles.Domain.Services;
 
 public sealed class ArticleService(
     IArticleRepository articleRepository
-)
+) : IArticleService
 {
     public async Task<Result<ArticleModel>> Create(
         ArticleModel article,
@@ -46,12 +47,23 @@ public sealed class ArticleService(
             return Result.Fail(new AccessDeniedError());
         }
 
+        List<TagModel> tags = null;
+
+        if (updateArticleDto.Tags is not null)
+        {
+            tags = new List<TagModel>();
+            foreach (var guid in updateArticleDto.Tags)
+            {
+                tags.Add((await articleRepository.GetTagById(guid, cancellationToken)).Value);
+            }
+        }
+
         var createResult = ArticleModel.Create(
             oldArticle.Id,
             updateArticleDto.Title ?? oldArticle.Title,
             updateArticleDto.PreviewMediaId ?? oldArticle.PreviewMediaId,
             updateArticleDto.PreviewText ?? oldArticle.PreviewText,
-            updateArticleDto.Tags ?? oldArticle.Tags,
+            tags ?? oldArticle.Tags,
             oldArticle.CreationDate,
             oldArticle.AuthorId,
             oldArticle.IsVisible,

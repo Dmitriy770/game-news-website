@@ -7,6 +7,6 @@ public record UpdateArticleDto(
     string? Title,
     string? PreviewText,
     Guid? PreviewMediaId,
-    List<TagModel> Tags,
+    List<Guid>? Tags,
     string? Content
 );
