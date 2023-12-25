@@ -4,7 +4,7 @@ using GameNews.Articles.Application.Shared;
 using GameNews.Articles.Domain.Errors;
 using MediatR;
 
-namespace GameNews.Articles.Application.Commands;
+namespace GameNews.Articles.Application.Commands.Articles;
 
 public record ChangeVisibilityArticleCommand(
     Guid ArticleId,

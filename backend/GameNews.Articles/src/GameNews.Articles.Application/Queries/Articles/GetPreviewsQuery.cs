@@ -3,7 +3,7 @@ using GameNews.Articles.Application.Shared;
 using GameNews.Articles.Domain.Models;
 using MediatR;
 
-namespace GameNews.Articles.Application.Queries;
+namespace GameNews.Articles.Application.Queries.Articles;
 
 public record GetPreviewsQuery(
     int Skip,
@@ -11,13 +11,17 @@ public record GetPreviewsQuery(
     bool IsVisible,
     string? Query,
     User User
-) : IRequest<IEnumerable<ArticlePreview>>;
+) : IRequest<GetPreviewsResult>;
+
+public record GetPreviewsResult(
+    List<ArticlePreview> Previews
+);
 
 internal sealed class GetPreviewsQueryHandler(
     IArticleRepository articleRepository
-) : IRequestHandler<GetPreviewsQuery, IEnumerable<ArticlePreview>>
+) : IRequestHandler<GetPreviewsQuery, GetPreviewsResult>
 {
-    public async Task<IEnumerable<ArticlePreview>> Handle(GetPreviewsQuery request, CancellationToken cancellationToken)
+    public async Task<GetPreviewsResult> Handle(GetPreviewsQuery request, CancellationToken cancellationToken)
     {
         var (skip, take, isVisible, query, user) = request;
 
@@ -39,12 +43,17 @@ internal sealed class GetPreviewsQueryHandler(
             };
         }
 
-        return articles.Select(a => new ArticlePreview(
-            a.Id,
-            a.Title,
-            a.PreviewMediaId,
-            a.PreviewText,
-            new ArticleMeta(a.CreationDate, a.AuthorId)
-        ));
+        return new GetPreviewsResult(
+            articles.Select(a => new ArticlePreview(
+                a.Id,
+                a.Title,
+                a.PreviewMediaId,
+                a.PreviewText,
+                new ArticleMeta(
+                    a.CreationDate,
+                    new Author(a.AuthorId)
+                )
+            )).ToList()
+        );
     }
 }

@@ -32,4 +32,14 @@ public interface IArticleRepository
         int skip,
         int take,
         CancellationToken cancellationToken);
+    
+    public Task AddTag(TagModel tag, CancellationToken cancellationToken);
+    
+    public Task UpdateTag(TagModel tag, CancellationToken cancellationToken);
+    
+    public Task<TagModel?> GetTagById(Guid tagId, CancellationToken cancellationToken);
+    
+    public Task<IEnumerable<TagModel>> GetAllTags(CancellationToken cancellationToken);
+
+    public Task DeleteTag(Guid tagId, CancellationToken cancellationToken);
 }

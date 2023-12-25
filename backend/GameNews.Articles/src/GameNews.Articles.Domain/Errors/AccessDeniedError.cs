@@ -2,7 +2,7 @@
 
 namespace GameNews.Articles.Domain.Errors;
 
-public class AccessDeniedError : IError
+public sealed class AccessDeniedError : IError
 {
     public string Message { get; } = "Access denied error";
     public Dictionary<string, object> Metadata { get; } = new();

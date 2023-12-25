@@ -1,7 +1,7 @@
 using GameNews.Articles.Api.Extensions;
-using GameNews.Articles.Api.Requests;
-using GameNews.Articles.Application.Commands;
-using GameNews.Articles.Application.Queries;
+using GameNews.Articles.Api.Requests.Articles;
+using GameNews.Articles.Application.Commands.Articles;
+using GameNews.Articles.Application.Queries.Articles;
 using GameNews.Articles.Application.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -146,6 +146,6 @@ public sealed class ArticleController(
             new User(userId, username, userRole)
         ), cancellationToken);
 
-        return new OkObjectResult(result.ToList());
+        return new OkObjectResult(result);
     }
 }

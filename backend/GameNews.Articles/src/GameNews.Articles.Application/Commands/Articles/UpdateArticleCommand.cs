@@ -5,52 +5,55 @@ using GameNews.Articles.Domain.Errors;
 using GameNews.Articles.Domain.Models;
 using MediatR;
 
-namespace GameNews.Articles.Application.Commands;
+namespace GameNews.Articles.Application.Commands.Articles;
 
-public record UpdatePreviewArticleCommand(
+public record UpdateArticleCommand(
     Guid ArticleId,
-    Guid? NewPreviewMediaId,
-    string? NewPreviewText,
+    string? NewTitle,
+    string? NewContent,
+    List<Guid>? TagIds,
     User User
 ) : IRequest<Result>;
 
-internal sealed class UpdatePreviewArticleCommandHandler(
+internal sealed class UpdateArticleCommandHandler(
     IArticleRepository articleRepository
-) : IRequestHandler<UpdatePreviewArticleCommand, Result>
+) : IRequestHandler<UpdateArticleCommand, Result>
 {
-    public async Task<Result> Handle(UpdatePreviewArticleCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateArticleCommand request, CancellationToken cancellationToken)
     {
-        var (articleId, newPreviewMediaId, newPreviewText, user) = request;
-        
+        var (articleId, newTitle, newContent, tagIds, user) = request;
+
         var oldArticle = await articleRepository.GetArticleById(articleId, cancellationToken);
         if (oldArticle is null)
         {
             return Result.Fail(new ArticleNotFoundError());
         }
-        
+
         if (!(user.Role is User.AdministratorRole
               || user.Role is User.AuthorRole &&
               string.Compare(user.Id, oldArticle.AuthorId, StringComparison.Ordinal) == 0))
         {
             return Result.Fail(new AccessDeniedError());
         }
-        
+
+        var tags = await articleRepository.GetTagsByIds(tagIds ?? [], cancellationToken);
+
         var createResult = ArticleModel.Create(
             articleId,
-            oldArticle.Title,
-            newPreviewMediaId ?? oldArticle.PreviewMediaId,
-            newPreviewText ?? oldArticle.PreviewText,
-            oldArticle.Tags,
+            newTitle ?? oldArticle.Title,
+            oldArticle.PreviewMediaId,
+            oldArticle.PreviewText,
+            tagIds is null ? oldArticle.Tags : tags.ToList(),
             oldArticle.CreationDate,
             oldArticle.AuthorId,
             oldArticle.IsVisible,
-            oldArticle.Content
+            newContent ?? oldArticle.Content
         );
         if (createResult.IsFailed)
         {
             return Result.Fail(createResult.Errors.FirstOrDefault());
         }
-        
+
         var article = createResult.Value;
         await articleRepository.UpdateArticle(article, cancellationToken);
 

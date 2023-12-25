@@ -1,4 +1,4 @@
-namespace GameNews.Articles.Api.Requests;
+namespace GameNews.Articles.Api.Requests.Articles;
 
 public record UpdatePreviewArticleRequest(
     Guid? PreviewMediaId,

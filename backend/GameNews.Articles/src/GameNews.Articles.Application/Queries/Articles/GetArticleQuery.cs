@@ -4,7 +4,7 @@ using GameNews.Articles.Application.Shared;
 using GameNews.Articles.Domain.Errors;
 using MediatR;
 
-namespace GameNews.Articles.Application.Queries;
+namespace GameNews.Articles.Application.Queries.Articles;
 
 public record GetArticleQuery(
     Guid ArticleId,
@@ -42,13 +42,15 @@ internal sealed class GetArticleQueryHandler(
             return Result.Fail(new AccessDeniedError());
         }
 
-        var articleMeta = new ArticleMeta(article.CreationDate, article.AuthorId);
+        var articleMeta = new ArticleMeta(
+            article.CreationDate,
+            new Author(article.AuthorId)
+        );
         return new GetArticleQueryResult(
             article.Id,
             new ArticlePreview(article.Id, article.Title, article.PreviewMediaId, article.PreviewText, articleMeta),
             article.Content,
-            // article.Tags.Select(t => new Tag(t.Id, t.Name, t.Description)).ToList(),
-            [],
+            article.Tags.Select(t => new Tag(t.Id, t.Name, t.Description)).ToList(),
             articleMeta
         );
     }

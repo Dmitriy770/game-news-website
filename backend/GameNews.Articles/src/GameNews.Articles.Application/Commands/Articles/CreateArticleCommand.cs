@@ -5,7 +5,7 @@ using GameNews.Articles.Domain.Errors;
 using GameNews.Articles.Domain.Models;
 using MediatR;
 
-namespace GameNews.Articles.Application.Commands;
+namespace GameNews.Articles.Application.Commands.Articles;
 
 public record CreateArticleCommand(
     Guid ArticleId,
@@ -45,7 +45,10 @@ internal sealed class CreateArticleCommandHandler(
         return new CreateArticleResult(
             article.Id,
             article.Title,
-            new ArticleMeta(article.CreationDate, article.AuthorId)
+            new ArticleMeta(
+                article.CreationDate,
+                new Author(article.AuthorId)
+            )
         );
     }
 }

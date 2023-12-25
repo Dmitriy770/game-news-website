@@ -5,17 +5,16 @@ namespace GameNews.Articles.Domain.Models;
 
 public record TagModel
 {
-    public Guid Id { get; }
-    public string Name { get; }
-    public string Description { get; }
-    
-    public List<ArticleModel> Articles { get; set; }
+    public Guid Id { get; private set; }
+    public string Name { get; private set; }
+    public string Description { get; private set; }
+    public List<ArticleModel> Articles { get; private set; } = [];
 
-    public TagModel()
+    private TagModel()
     {
         
     }
-    public TagModel(Guid id, string name, string description)
+    private TagModel(Guid id, string name, string description)
     {
         Id = id;
         Name = name;

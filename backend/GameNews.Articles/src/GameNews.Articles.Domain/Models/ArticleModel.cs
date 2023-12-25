@@ -5,15 +5,15 @@ namespace GameNews.Articles.Domain.Models;
 
 public record ArticleModel
 {
-    public Guid Id { get; init; }
-    public string Title { get; init;}
-    public Guid? PreviewMediaId { get; init;}
-    public string? PreviewText { get; init;}
-    public List<TagModel> Tags { get; init;}
-    public DateTime CreationDate { get; init;}
-    public string AuthorId { get; init;}
-    public bool IsVisible { get; set; }
-    public string Content { get; init;}
+    public Guid Id { get; private set; }
+    public string Title { get; private set;}
+    public Guid? PreviewMediaId { get; private set;}
+    public string? PreviewText { get; private set;}
+    public List<TagModel> Tags { get; private set; } = [];
+    public DateTime CreationDate { get; private set;}
+    public string AuthorId { get; private set;}
+    public bool IsVisible { get; private set; }
+    public string Content { get; private set;}
 
     public void Hide()
     {
@@ -25,11 +25,11 @@ public record ArticleModel
         IsVisible = true;
     }
 
-    public ArticleModel()
+    private ArticleModel()
     {
         
     }
-    public ArticleModel(
+    private ArticleModel(
         Guid id,
         string title,
         Guid? previewMediaId,

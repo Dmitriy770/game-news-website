@@ -19,7 +19,7 @@ public static class ListErrorsToActionResult
             return new NotFoundResult();
         }
 
-        if (errors.Find(e => e is ValidateError) is not null)
+        if (errors.Find(e => e is ValidateError or DeleteTagError) is not null)
         {
             return new BadRequestResult();
         }
