@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CD524D75-6B66-4BA7-BFB0-3204C2A9EB06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameNews.Frontend", "src\GameNews.Frontend\GameNews.Frontend.csproj", "{75898521-429D-416B-AE52-5F26F5608515}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E007CF94-85D1-42AD-9136-9AE7E622E7A5}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{75898521-429D-416B-AE52-5F26F5608515} = {CD524D75-6B66-4BA7-BFB0-3204C2A9EB06}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{75898521-429D-416B-AE52-5F26F5608515}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75898521-429D-416B-AE52-5F26F5608515}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75898521-429D-416B-AE52-5F26F5608515}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75898521-429D-416B-AE52-5F26F5608515}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,16 @@
+version: '3.9'
+
+services:
+  frontend:
+    build:
+      dockerfile: src/GameNews.Frontend/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH: true
+      DOTNET_USE_POLLING_FILE_WATCHER: true
+    volumes:
+      - .:/app
+      - /app/obj/
+      - /app/bin/
+      - /app/src/GameNews.Frontend/obj/
+      - /app/src/GameNews.Frontend/bin/
