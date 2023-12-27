@@ -16,7 +16,7 @@ namespace GameNews.OAuth.Infrastructure.Api;
 public class DiscordClient : IDiscordClient
 {
     private readonly HttpClient _httpClient;
-    private const string RedirectUri = "http://localhost:8080";
+    private const string RedirectUri = "http://localhost:8080/login";
     private readonly DiscordApiOptions _discordApiOptions;
 
     private readonly JsonSerializerOptions _serializerOptions =

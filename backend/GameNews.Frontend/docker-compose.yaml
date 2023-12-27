@@ -10,7 +10,5 @@ services:
       DOTNET_USE_POLLING_FILE_WATCHER: true
     volumes:
       - .:/app
-      - /app/obj/
-      - /app/bin/
       - /app/src/GameNews.Frontend/obj/
       - /app/src/GameNews.Frontend/bin/

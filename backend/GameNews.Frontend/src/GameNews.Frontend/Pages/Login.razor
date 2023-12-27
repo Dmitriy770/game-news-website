@@ -1,4 +1,6 @@
-﻿@page "/login"
+﻿@inject NavigationManager Navigation
+
+@page "/login"
 
 <PageTitle>Вход</PageTitle>
 
@@ -13,5 +15,22 @@
 </MudContainer>
 
 @code {
+    [SupplyParameterFromQuery]
+    public string? Code { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await ValidateCode();
+    }
+
+    private async Task ValidateCode()
+    {
+        if (Code is null)
+        {
+            return;
+        }
+        
+        
+    }
 
 }
