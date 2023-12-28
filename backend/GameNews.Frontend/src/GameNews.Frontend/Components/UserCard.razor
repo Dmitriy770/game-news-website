@@ -1,0 +1,73 @@
+﻿@using GameNews.Frontend.Services.Interfaces
+@using GameNews.Frontend.Models
+@inject IAuthService AuthService
+@inject IUserService UserService
+
+<div class="@($"{Class} d-flex flex-row align-items-stretch")">
+    @switch (state)
+    {
+        case UserCardState.Loading:
+            <MudSkeleton Class="me-2"
+                         SkeletonType="SkeletonType.Circle"
+                         Width="40px"
+                         Height="40px"/>
+            <div class="d-flex flex-column align-items-start justify-content-center me-2">
+                <MudSkeleton SkeletonType="SkeletonType.Text"
+                             Width="120px"/>
+                <MudSkeleton SkeletonType="SkeletonType.Text"
+                             Width="80px"/>
+            </div>
+            <MudSkeleton Class="align-self-center"
+                         SkeletonType="SkeletonType.Rectangle"
+                         Width="35px"
+                         Height="35px"/>
+            break;
+
+        case UserCardState.Load:
+            <MudAvatar Class="me-2"
+                       Size="Size.Medium"
+                       Color="Color.Primary">
+                <MudImage Src="@user?.AvatarUrl.ToString()"/>
+            </MudAvatar>
+            <div class="d-flex flex-column align-items-start justify-content-center me-2">
+                <span class="fs-6 fw-bold">@user?.Name</span>
+                <span style="font-size: small">@user?.Role</span>
+            </div>
+            <MudIconButton Class="ms-2"
+                           Size="Size.Large"
+                           Icon="@Icons.Material.Filled.ExitToApp"
+                           Variant="Variant.Filled"
+                           Color="Color.Error"
+                           OnClick="@OnLogOutButtonClick"/>
+            break;
+    }
+</div>
+
+@code {
+    [Parameter] public string? Class { get; set; }
+
+    private enum UserCardState
+    {
+        Loading,
+        Load
+    }
+
+    private UserCardState state = UserCardState.Loading;
+
+    private User? user;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        state = UserCardState.Loading;
+
+        var accessToken = await AuthService.GetActualAccessToken();
+        user = await UserService.GetMe(accessToken);
+        
+        state = UserCardState.Load;
+    }
+
+    private async Task OnLogOutButtonClick()
+    {
+        await AuthService.LogOut();
+    }
+}

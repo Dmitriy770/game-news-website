@@ -1,4 +1,7 @@
-﻿@inject NavigationManager Navigation
+﻿@using GameNews.Frontend.Services.Interfaces
+
+@inject NavigationManager Navigation
+@inject IAuthService AuthService
 
 @page "/login"
 
@@ -15,22 +18,20 @@
 </MudContainer>
 
 @code {
-    [SupplyParameterFromQuery]
-    public string? Code { get; set; }
-    
+    [SupplyParameterFromQuery] public string? Code { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        await ValidateCode();
-    }
-
-    private async Task ValidateCode()
-    {
-        if (Code is null)
+        Console.WriteLine(Code);
+        if (await AuthService.GetAuthToken() is not null)
         {
-            return;
+            Navigation.NavigateTo("");
         }
-        
-        
+
+        if (Code is not null && await AuthService.LogIn(Code))
+        {
+            Navigation.NavigateTo("");
+        }
     }
 
 }

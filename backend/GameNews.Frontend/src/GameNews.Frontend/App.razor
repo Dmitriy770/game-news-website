@@ -1,4 +1,10 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
+﻿@using GameNews.Frontend.Services.Interfaces
+
+@inject IAuthService AuthService
+@inject NavigationManager Naviagtion
+
+<Router AppAssembly="@typeof(App).Assembly"
+        OnNavigateAsync="OnNavigateAsync">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
         <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
@@ -10,3 +16,15 @@
         </LayoutView>
     </NotFound>
 </Router>
+
+@code{
+
+    private async Task OnNavigateAsync(NavigationContext context)
+    {
+        if (!context.Path.StartsWith("login") && await AuthService.GetAuthToken(context.CancellationToken) is null)
+        {
+            Naviagtion.NavigateTo("login");
+        }
+    }
+
+}

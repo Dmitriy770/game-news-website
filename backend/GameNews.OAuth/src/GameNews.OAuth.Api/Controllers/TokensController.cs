@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using GameNews.OAuth.Api.Responses;
+﻿using GameNews.OAuth.Api.Responses;
 using GameNews.OAuth.Domain.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

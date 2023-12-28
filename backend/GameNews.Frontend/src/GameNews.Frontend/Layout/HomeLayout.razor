@@ -1,0 +1,15 @@
+﻿@inherits LayoutComponentBase
+@layout MainLayout
+
+<MudContainer Class="h-100"
+              MaxWidth="MaxWidth.Large">
+    <MudPaper Class="h-100 d-flex flex-column">
+        <HomeHeader Class="m-1"/>
+        <div class="flex-grow-1 m-1">
+            @Body
+        </div>
+        <MudPaper Class="m-1">
+            Footer
+        </MudPaper>
+    </MudPaper>
+</MudContainer>
