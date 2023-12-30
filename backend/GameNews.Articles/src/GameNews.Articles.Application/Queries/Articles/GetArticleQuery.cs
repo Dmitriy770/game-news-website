@@ -42,15 +42,16 @@ internal sealed class GetArticleQueryHandler(
             return Result.Fail(new AccessDeniedError());
         }
 
+        var articleTags = article.Tags.Select(t => new Tag(t.Id, t.Name, t.Description)).ToList();
         var articleMeta = new ArticleMeta(
             article.CreationDate,
             new Author(article.AuthorId)
         );
         return new GetArticleQueryResult(
             article.Id,
-            new ArticlePreview(article.Id, article.Title, article.PreviewMediaId, article.PreviewText, articleMeta),
+            new ArticlePreview(article.Id, article.Title, article.PreviewMediaId, article.PreviewText, articleTags, articleMeta),
             article.Content,
-            article.Tags.Select(t => new Tag(t.Id, t.Name, t.Description)).ToList(),
+            articleTags,
             articleMeta
         );
     }

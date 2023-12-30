@@ -5,5 +5,6 @@ public record ArticlePreview(
     string Title,
     Guid? PreviewMediaId,
     string? PreviewText,
+    List<Tag> Tags,
     ArticleMeta Meta
 );

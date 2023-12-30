@@ -49,6 +49,7 @@ internal sealed class GetPreviewsQueryHandler(
                 a.Title,
                 a.PreviewMediaId,
                 a.PreviewText,
+                a.Tags.Select(t => new Tag(t.Id, t.Name, t.Description)).ToList(),
                 new ArticleMeta(
                     a.CreationDate,
                     new Author(a.AuthorId)

@@ -32,7 +32,18 @@ public sealed class ArticleRepository(
         var dbArticle = (await context.Articles.FindAsync(article.Id, cancellationToken))!;
         await context.Entry(dbArticle).Collection("Tags").LoadAsync(cancellationToken);
         dbArticle.Tags.Clear();
+        article.Tags.ForEach(t => Console.Write(t + " "));
+        article.Tags.ForEach(t => Console.Write(t + " "));
         dbArticle.Tags.AddRange(article.Tags);
+        
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task ChangeVisible(Guid articleId, bool isVisible, CancellationToken cancellationToken)
+    {
+        await context.Articles.Where(a => a.Id == articleId).ExecuteUpdateAsync(
+            s => s.SetProperty(a => a.IsVisible, isVisible),
+            cancellationToken);
 
         await context.SaveChangesAsync(cancellationToken);
     }
@@ -59,6 +70,7 @@ public sealed class ArticleRepository(
         CancellationToken cancellationToken)
     {
         return await context.Articles
+            .Include(a => a.Tags)
             .Where(a => !a.IsVisible)
             .Where(a => a.AuthorId == authorId)
             .Where(a => query == null || a.Title.Contains(query))
@@ -71,6 +83,7 @@ public sealed class ArticleRepository(
         CancellationToken cancellationToken)
     {
         return await context.Articles
+            .Include(a => a.Tags)
             .Where(a => !a.IsVisible)
             .Where(a => query == null || a.Title.Contains(query))
             .Skip(skip)
@@ -82,6 +95,7 @@ public sealed class ArticleRepository(
         CancellationToken cancellationToken)
     {
         return await context.Articles
+            .Include(a => a.Tags)
             .Where(a => a.IsVisible)
             .Where(a => query == null || a.Title.Contains(query))
             .Skip(skip)

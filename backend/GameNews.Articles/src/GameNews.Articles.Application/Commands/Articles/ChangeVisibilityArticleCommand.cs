@@ -33,16 +33,7 @@ internal sealed class ChangeVisibilityArticleCommandHandler(
             return Result.Fail(new AccessDeniedError());
         }
 
-        if (isVisible)
-        {
-            article.Show();
-        }
-        else
-        {
-            article.Hide();
-        }
-
-        await articleRepository.UpdateArticle(article, cancellationToken);
+        await articleRepository.ChangeVisible(articleId, isVisible, cancellationToken);
 
         return Result.Ok();
     }

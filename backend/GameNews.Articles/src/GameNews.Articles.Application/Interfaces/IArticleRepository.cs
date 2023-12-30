@@ -7,6 +7,7 @@ public interface IArticleRepository
 { 
     Task AddArticle(ArticleModel article, CancellationToken cancellationToken);
     Task UpdateArticle(ArticleModel article, CancellationToken cancellationToken);
+    Task ChangeVisible(Guid articleId, bool isVisible, CancellationToken cancellationToken);
 
     Task DeleteArticle(Guid articleId, CancellationToken cancellationToken);
     
