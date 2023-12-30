@@ -14,4 +14,9 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MEDIA_STORAGE_DB_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MEDIA_STORAGE_DB_PASSWORD}
+    volumes:
+      - mediadata:/data/db
+  
+volumes:
+  mediadata:
   
